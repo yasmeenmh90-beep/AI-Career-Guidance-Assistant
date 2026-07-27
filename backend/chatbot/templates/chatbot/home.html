@@ -19,7 +19,7 @@
 <h3>📍 Career Roadmap:</h3>
 <ol>
 {% for step in roadmap %}
-    <li>{{ step }}</li>
+<li>{{ step }}</li>
 {% endfor %}
 </ol>
     {% endif %}
@@ -28,9 +28,22 @@
 <h3>📚 Recommended Courses:</h3>
 <ul>
 {% for course in courses %}
-    <li><a href="{{ course.link }}" target="_blank">{{ course.name }}</a> ({{ course.platform }})</li>
+<li><a href="{{ course.link }}" target="_blank">{{ course.name }}</a> ({{ course.platform }})</li>
 {% endfor %}
 </ul>
+    {% endif %}
+
+<hr>
+<h2>📄 Resume Analysis</h2>
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="file" name="resume_file" accept=".pdf,.docx">
+    <button type="submit" name="analyze_resume">Analyze Resume</button>
+</form>
+
+    {% if resume_feedback %}
+<h3>📋 Resume Feedback:</h3>
+<p>{{ resume_feedback }}</p>
     {% endif %}
 </body>
 </html>
