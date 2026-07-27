@@ -1,0 +1,17 @@
+{
+  "AI Engineer": [
+    {"name": "Machine Learning Specialization - Andrew Ng", "platform": "Coursera", "link": "https://www.coursera.org/specializations/machine-learning-introduction"},
+    {"name": "Deep Learning Specialization", "platform": "Coursera", "link": "https://www.coursera.org/specializations/deep-learning"},
+    {"name": "Python for Data Science and AI", "platform": "edX", "link": "https://www.edx.org/learn/python"}
+  ],
+  "Data Scientist": [
+    {"name": "IBM Data Science Professional Certificate", "platform": "Coursera", "link": "https://www.coursera.org/professional-certificates/ibm-data-science"},
+    {"name": "Data Analysis with Python", "platform": "freeCodeCamp", "link": "https://www.freecodecamp.org/learn/data-analysis-with-python/"},
+    {"name": "SQL for Data Science", "platform": "Coursera", "link": "https://www.coursera.org/learn/sql-for-data-science"}
+  ],
+  "Web Developer": [
+    {"name": "The Web Developer Bootcamp", "platform": "Udemy", "link": "https://www.udemy.com/course/the-web-developer-bootcamp/"},
+    {"name": "Full Stack Open", "platform": "University of Helsinki", "link": "https://fullstackopen.com/en/"},
+    {"name": "React - The Complete Guide", "platform": "Udemy", "link": "https://www.udemy.com/course/react-the-complete-guide-incl-redux/"}
+  ]
+}

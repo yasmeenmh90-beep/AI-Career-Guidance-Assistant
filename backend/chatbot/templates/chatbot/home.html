@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Career Guidance Chatbot</title>
+</head>
+<body>
+<h1>AI Career & Study Guidance Chatbot</h1>
+<form method="POST">
+        {% csrf_token %}
+<input type="text" name="question" placeholder="Ask me anything about your career...">
+<button type="submit">Ask</button>
+</form>
+
+    {% if answer %}
+<p><strong>Answer:</strong> {{ answer }}</p>
+    {% endif %}
+
+    {% if roadmap %}
+<h3>📍 Career Roadmap:</h3>
+<ol>
+{% for step in roadmap %}
+    <li>{{ step }}</li>
+{% endfor %}
+</ol>
+    {% endif %}
+
+    {% if courses %}
+<h3>📚 Recommended Courses:</h3>
+<ul>
+{% for course in courses %}
+    <li><a href="{{ course.link }}" target="_blank">{{ course.name }}</a> ({{ course.platform }})</li>
+{% endfor %}
+</ul>
+    {% endif %}
+</body>
+</html>

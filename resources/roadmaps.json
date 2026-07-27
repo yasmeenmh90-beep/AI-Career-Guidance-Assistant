@@ -1,0 +1,38 @@
+{
+  "AI Engineer": {
+    "steps": [
+      "Learn Python programming fundamentals",
+      "Study Mathematics: Linear Algebra, Statistics, Probability",
+      "Learn Machine Learning basics (Scikit-learn)",
+      "Study Deep Learning (TensorFlow or PyTorch)",
+      "Learn Natural Language Processing (NLP)",
+      "Build 3-4 portfolio projects (e.g., chatbot, image classifier)",
+      "Learn cloud deployment (AWS, GCP, or Azure)",
+      "Apply for internships or entry-level AI roles"
+    ]
+  },
+  "Data Scientist": {
+    "steps": [
+      "Learn Python and SQL fundamentals",
+      "Study Statistics and Probability",
+      "Learn Data Cleaning and Exploratory Data Analysis (Pandas, NumPy)",
+      "Learn Data Visualization (Matplotlib, Seaborn, Power BI)",
+      "Study Machine Learning algorithms",
+      "Build a portfolio with real datasets (Kaggle projects)",
+      "Learn A/B testing and business analytics",
+      "Apply for data analyst or junior data scientist roles"
+    ]
+  },
+  "Web Developer": {
+    "steps": [
+      "Learn HTML, CSS, and JavaScript fundamentals",
+      "Learn a frontend framework (React or Vue)",
+      "Learn backend basics (Node.js, Django, or Flask)",
+      "Learn databases (SQL and/or MongoDB)",
+      "Learn Git and version control",
+      "Build 3-4 full-stack portfolio projects",
+      "Learn deployment (Vercel, Netlify, or Render)",
+      "Apply for junior web developer roles or freelance projects"
+    ]
+  }
+}
