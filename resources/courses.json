@@ -13,5 +13,28 @@
     {"name": "The Web Developer Bootcamp", "platform": "Udemy", "link": "https://www.udemy.com/course/the-web-developer-bootcamp/"},
     {"name": "Full Stack Open", "platform": "University of Helsinki", "link": "https://fullstackopen.com/en/"},
     {"name": "React - The Complete Guide", "platform": "Udemy", "link": "https://www.udemy.com/course/react-the-complete-guide-incl-redux/"}
+  ],
+  "Cloud Engineer": [
+    {"name": "AWS Cloud Practitioner Essentials", "platform": "Coursera", "link": "https://www.coursera.org/learn/aws-cloud-practitioner-essentials"},
+    {"name": "Microsoft Azure Fundamentals AZ-900 Exam Prep", "platform": "Coursera", "link": "https://www.coursera.org/specializations/microsoft-azure-fundamentals-az900-exam-prep"},
+    {"name": "AWS Cloud Technical Essentials", "platform": "Coursera", "link": "https://www.coursera.org/learn/aws-cloud-technical-essentials"}
+  ],
+  "Cybersecurity Analyst": [
+    {"name": "Google Cybersecurity Professional Certificate", "platform": "Coursera", "link": "https://www.coursera.org/professional-certificates/google-cybersecurity"},
+    {"name": "Foundations of Cybersecurity", "platform": "Coursera", "link": "https://www.coursera.org/learn/foundations-of-cybersecurity"}
+  ],
+  "Data Analyst": [
+    {"name": "Google Data Analytics Professional Certificate", "platform": "Coursera", "link": "https://www.coursera.org/professional-certificates/google-data-analytics"},
+    {"name": "IBM Data Analyst Professional Certificate", "platform": "Coursera", "link": "https://www.coursera.org/professional-certificates/ibm-data-analyst"},
+    {"name": "Foundations: Data, Data, Everywhere", "platform": "Coursera", "link": "https://www.coursera.org/learn/foundations-data"}
+  ],
+  "UI/UX Designer": [
+    {"name": "Google UX Design Professional Certificate", "platform": "Coursera", "link": "https://www.coursera.org/professional-certificates/google-ux-design"},
+    {"name": "UI/UX Design Specialization - CalArts", "platform": "Coursera", "link": "https://www.coursera.org/specializations/ui-ux-design"},
+    {"name": "Foundations of User Experience (UX) Design", "platform": "Coursera", "link": "https://www.coursera.org/learn/foundations-user-experience-design"}
+  ],
+  "DevOps Engineer": [
+    {"name": "IBM DevOps and Software Engineering Professional Certificate", "platform": "Coursera", "link": "https://www.coursera.org/professional-certificates/devops-and-software-engineering"},
+    {"name": "IBM Applied DevOps Engineering Professional Certificate", "platform": "Coursera", "link": "https://www.coursera.org/professional-certificates/ibm-applied-devops-engineering"}
   ]
 }

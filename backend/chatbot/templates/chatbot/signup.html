@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign up — Trailmark</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --bg: #F6F3EA; --surface: #FFFFFF; --ink: #1E2B22; --ink-soft: #4A594E;
+        --pine: #2F4B3C; --blaze: #E2632A; --blaze-dark: #C24F1D;
+        --moss: #7C9083; --line: #DED7C4; --focus: #2E6FEE;
+        --font-display: 'Fraunces', serif; --font-body: 'Inter', sans-serif;
+        --font-mono: 'IBM Plex Mono', monospace;
+    }
+    * { box-sizing: border-box; }
+    body {
+        margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center;
+        background: var(--bg); color: var(--ink); font-family: var(--font-body);
+    }
+    .auth-card {
+        width: 100%; max-width: 380px; background: var(--surface);
+        border: 1px solid var(--line); border-radius: 14px; padding: 2.25rem;
+        margin: 1.5rem;
+    }
+    .eyebrow {
+        font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.18em;
+        text-transform: uppercase; color: var(--blaze); display: inline-flex;
+        align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;
+    }
+    .eyebrow::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--blaze); }
+    h1 {
+        font-family: var(--font-display); font-weight: 700; font-size: 1.6rem;
+        color: var(--pine); margin: 0 0 0.4rem;
+    }
+    .subtitle { font-size: 0.9rem; color: var(--ink-soft); margin: 0 0 1.25rem; }
+    label { font-size: 0.85rem; color: var(--ink-soft); display: block; margin: 0.9rem 0 0.35rem; }
+    input {
+        width: 100%; font-family: var(--font-body); font-size: 0.95rem; color: var(--ink);
+        background: var(--bg); border: 1px solid var(--line); border-radius: 10px;
+        padding: 0.7rem 0.9rem;
+    }
+    input:focus { outline: 2px solid var(--focus); outline-offset: 2px; }
+    .helptext { font-size: 0.78rem; color: var(--moss); margin: 0.3rem 0 0; }
+    button {
+        width: 100%; margin-top: 1.5rem; font-family: var(--font-body); font-weight: 600;
+        font-size: 0.92rem; background: var(--blaze); color: #fff; border: none;
+        border-radius: 10px; padding: 0.75rem 1.4rem; cursor: pointer;
+    }
+    button:hover { background: var(--blaze-dark); }
+    .switch-link { margin-top: 1.25rem; font-size: 0.88rem; color: var(--ink-soft); text-align: center; }
+    .switch-link a { color: var(--pine); font-weight: 600; text-decoration: none; }
+    .switch-link a:hover { text-decoration: underline; }
+    .errorlist { color: var(--blaze-dark); font-size: 0.82rem; padding-left: 1.1rem; margin: 0.3rem 0; }
+</style>
+</head>
+<body>
+    <div class="auth-card">
+        <span class="eyebrow">Trailmark</span>
+        <h1>Start your trail</h1>
+        <p class="subtitle">Create an account to save your progress.</p>
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Create Account</button>
+        </form>
+        <p class="switch-link">Already have an account? <a href="{% url 'login' %}">Log in</a></p>
+    </div>
+</body>
+</html>

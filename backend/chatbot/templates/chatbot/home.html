@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
- 
+
 <style>
     :root {
         --bg: #F6F3EA;
@@ -22,14 +21,14 @@
         --moss: #7C9083;
         --line: #DED7C4;
         --focus: #2E6FEE;
- 
+
         --font-display: 'Fraunces', serif;
         --font-body: 'Inter', sans-serif;
         --font-mono: 'IBM Plex Mono', monospace;
     }
- 
+
     * { box-sizing: border-box; }
- 
+
     body {
         margin: 0;
         background: var(--bg);
@@ -38,18 +37,39 @@
         line-height: 1.55;
         -webkit-font-smoothing: antialiased;
     }
- 
+
     a { color: var(--pine); }
- 
+
     ::selection { background: var(--blaze); color: #fff; }
- 
+
+    .topbar {
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 1.5rem 1.5rem 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-family: var(--font-mono);
+        font-size: 0.8rem;
+        color: var(--ink-soft);
+    }
+
+    .topbar a {
+        color: var(--pine);
+        text-decoration: none;
+        font-weight: 600;
+        margin-left: 1rem;
+    }
+
+    .topbar a:hover { text-decoration: underline; }
+
     .hero {
         max-width: 760px;
         margin: 0 auto;
-        padding: 4.5rem 1.5rem 3rem;
+        padding: 2rem 1.5rem 3rem;
         text-align: left;
     }
- 
+
     .eyebrow {
         font-family: var(--font-mono);
         font-size: 0.72rem;
@@ -61,7 +81,7 @@
         gap: 0.5rem;
         margin-bottom: 1rem;
     }
- 
+
     .eyebrow::before {
         content: "";
         width: 8px;
@@ -69,7 +89,7 @@
         border-radius: 50%;
         background: var(--blaze);
     }
- 
+
     .hero h1 {
         font-family: var(--font-display);
         font-weight: 700;
@@ -78,21 +98,73 @@
         margin: 0 0 1rem;
         color: var(--pine);
     }
- 
+
     .hero p {
         font-size: 1.05rem;
         color: var(--ink-soft);
         max-width: 46ch;
         margin: 0;
     }
- 
+
+    .progress-ring-wrap {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-top: 1.75rem;
+        padding-top: 1.5rem;
+        border-top: 1px dashed var(--line);
+    }
+
+    .progress-ring {
+        width: 60px;
+        height: 60px;
+        transform: rotate(-90deg);
+        flex-shrink: 0;
+    }
+
+    .progress-ring-bg {
+        fill: none;
+        stroke: var(--line);
+        stroke-width: 8;
+    }
+
+    .progress-ring-fill {
+        fill: none;
+        stroke: var(--blaze);
+        stroke-width: 8;
+        stroke-linecap: round;
+        transition: stroke-dashoffset 0.8s ease;
+    }
+
+    .progress-ring-text {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .progress-ring-percent {
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: 1.25rem;
+        color: var(--pine);
+        line-height: 1.1;
+    }
+
+    .progress-ring-sub {
+        font-family: var(--font-mono);
+        font-size: 0.7rem;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--moss);
+        margin-top: 0.2rem;
+    }
+
     .trail {
         max-width: 760px;
         margin: 0 auto;
         padding: 0 1.5rem 5rem;
         position: relative;
     }
- 
+
     .trail::before {
         content: "";
         position: absolute;
@@ -106,16 +178,16 @@
         background-repeat: repeat-y;
         opacity: 0.55;
     }
- 
+
     .waypoint {
         position: relative;
         padding-left: 3.75rem;
         margin-bottom: 2.75rem;
         animation: rise 0.5s ease both;
     }
- 
+
     .waypoint:last-child { margin-bottom: 0; }
- 
+
     .marker {
         position: absolute;
         left: 0;
@@ -134,13 +206,13 @@
         z-index: 1;
         transition: all 0.3s ease;
     }
- 
+
     .waypoint--reached .marker {
         background: var(--pine);
         border-color: var(--pine);
         color: #fff;
     }
- 
+
     .waypoint-head {
         display: flex;
         align-items: baseline;
@@ -150,7 +222,7 @@
         margin-bottom: 1rem;
         padding-top: 0.55rem;
     }
- 
+
     .waypoint-head h2 {
         font-family: var(--font-display);
         font-weight: 600;
@@ -158,7 +230,7 @@
         margin: 0;
         color: var(--pine);
     }
- 
+
     .waypoint-label {
         font-family: var(--font-mono);
         font-size: 0.7rem;
@@ -166,22 +238,22 @@
         text-transform: uppercase;
         color: var(--moss);
     }
- 
+
     .card {
         background: var(--surface);
         border: 1px solid var(--line);
         border-radius: 14px;
         padding: 1.5rem;
     }
- 
+
     .card + .card { margin-top: 1rem; }
- 
+
     .field-row {
         display: flex;
         gap: 0.6rem;
         flex-wrap: wrap;
     }
- 
+
     input[type="text"],
     textarea,
     select {
@@ -195,9 +267,9 @@
         flex: 1;
         min-width: 200px;
     }
- 
+
     textarea { width: 100%; resize: vertical; font-family: var(--font-body); }
- 
+
     input[type="text"]:focus,
     textarea:focus,
     select:focus,
@@ -206,12 +278,12 @@
         outline: 2px solid var(--focus);
         outline-offset: 2px;
     }
- 
+
     input[type="file"] {
         font-family: var(--font-body);
         font-size: 0.9rem;
     }
- 
+
     button {
         font-family: var(--font-body);
         font-weight: 600;
@@ -225,24 +297,24 @@
         transition: background 0.15s ease, transform 0.1s ease;
         white-space: nowrap;
     }
- 
+
     button:hover { background: var(--blaze-dark); }
     button:active { transform: translateY(1px); }
- 
+
     button.secondary {
         background: transparent;
         color: var(--pine);
         border: 1px solid var(--pine);
     }
- 
+
     button.secondary:hover { background: var(--pine); color: #fff; }
- 
+
     .answer-block {
         margin-top: 1rem;
         padding-top: 1rem;
         border-top: 1px dashed var(--line);
     }
- 
+
     .answer-label {
         font-family: var(--font-mono);
         font-size: 0.7rem;
@@ -252,20 +324,27 @@
         margin-bottom: 0.5rem;
         display: block;
     }
- 
+
+    .field-note {
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+        color: var(--moss);
+        margin: 0.6rem 0 0;
+    }
+
     /* ---------- Rendered AI markdown content ---------- */
     .ai-content {
         color: var(--ink);
         font-size: 0.96rem;
     }
- 
+
     .ai-content > *:first-child { margin-top: 0; }
     .ai-content > *:last-child { margin-bottom: 0; }
- 
+
     .ai-content p {
         margin: 0 0 0.85rem;
     }
- 
+
     .ai-content h1,
     .ai-content h2,
     .ai-content h3,
@@ -276,7 +355,7 @@
         margin: 1.3rem 0 0.6rem;
         line-height: 1.3;
     }
- 
+
     .ai-content h1 { font-size: 1.25rem; }
     .ai-content h2 { font-size: 1.15rem; }
     .ai-content h3 { font-size: 1.05rem; }
@@ -287,30 +366,30 @@
         letter-spacing: 0.04em;
         color: var(--blaze);
     }
- 
+
     .ai-content strong {
         color: var(--pine);
         font-weight: 600;
     }
- 
+
     .ai-content ul,
     .ai-content ol {
         margin: 0 0 0.9rem;
         padding-left: 1.3rem;
     }
- 
+
     .ai-content li {
         margin-bottom: 0.4rem;
         padding-left: 0.2rem;
     }
- 
+
     .ai-content ul { list-style: none; margin-left: 0; padding-left: 0; }
- 
+
     .ai-content ul li {
         position: relative;
         padding-left: 1.3rem;
     }
- 
+
     .ai-content ul li::before {
         content: "";
         position: absolute;
@@ -321,19 +400,19 @@
         border-radius: 50%;
         background: var(--blaze);
     }
- 
+
     .ai-content ol {
         counter-reset: ai-step;
         list-style: none;
         padding-left: 0;
     }
- 
+
     .ai-content ol li {
         counter-increment: ai-step;
         position: relative;
         padding-left: 2rem;
     }
- 
+
     .ai-content ol li::before {
         content: counter(ai-step);
         position: absolute;
@@ -351,7 +430,7 @@
         align-items: center;
         justify-content: center;
     }
- 
+
     .ai-content code {
         font-family: var(--font-mono);
         font-size: 0.85em;
@@ -360,48 +439,97 @@
         border-radius: 4px;
         padding: 0.1rem 0.35rem;
     }
- 
+
     .ai-content hr {
         border: none;
         border-top: 1px dashed var(--line);
         margin: 1.2rem 0;
     }
- 
-    .roadmap-list {
+
+    .roadmap-progress {
+        margin: 0.9rem 0 1.3rem;
+    }
+
+    .roadmap-progress-label {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        font-family: var(--font-mono);
+        font-size: 0.7rem;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--moss);
+        margin-bottom: 0.45rem;
+    }
+
+    .roadmap-progress-track {
+        height: 6px;
+        background: var(--bg);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        overflow: hidden;
+    }
+
+    .roadmap-progress-fill {
+        height: 100%;
+        background: var(--blaze);
+        border-radius: 999px;
+        width: 0%;
+        animation: fill-bar 0.9s ease 0.1s forwards;
+    }
+
+    @keyframes fill-bar {
+        from { width: 0%; }
+        to { width: 100%; }
+    }
+
+    .roadmap-timeline {
         list-style: none;
-        margin: 0.75rem 0 0;
+        margin: 0;
         padding: 0;
         counter-reset: step;
+        position: relative;
     }
- 
-    .roadmap-list li {
+
+    .roadmap-timeline::before {
+        content: "";
+        position: absolute;
+        left: 0.85rem;
+        top: 0.3rem;
+        bottom: 0.9rem;
+        width: 2px;
+        background: var(--moss);
+        opacity: 0.35;
+    }
+
+    .roadmap-timeline li {
         counter-increment: step;
         position: relative;
-        padding: 0.6rem 0 0.6rem 2.4rem;
-        border-bottom: 1px solid var(--line);
+        padding: 0 0 1.15rem 2.6rem;
         font-size: 0.95rem;
     }
- 
-    .roadmap-list li:last-child { border-bottom: none; }
- 
-    .roadmap-list li::before {
+
+    .roadmap-timeline li:last-child { padding-bottom: 0; }
+
+    .roadmap-timeline li::before {
         content: counter(step);
         position: absolute;
         left: 0;
-        top: 0.5rem;
-        width: 1.6rem;
-        height: 1.6rem;
+        top: 0;
+        width: 1.75rem;
+        height: 1.75rem;
         border-radius: 50%;
-        background: var(--bg);
-        border: 1px solid var(--moss);
+        background: var(--surface);
+        border: 2px solid var(--pine);
         color: var(--pine);
         font-family: var(--font-mono);
         font-size: 0.75rem;
         display: flex;
         align-items: center;
         justify-content: center;
+        z-index: 1;
     }
- 
+
     .course-list {
         list-style: none;
         margin: 0.75rem 0 0;
@@ -410,7 +538,7 @@
         flex-direction: column;
         gap: 0.5rem;
     }
- 
+
     .course-list li {
         background: var(--bg);
         border: 1px solid var(--line);
@@ -418,16 +546,16 @@
         padding: 0.65rem 0.9rem;
         font-size: 0.9rem;
     }
- 
+
     .course-list a { font-weight: 600; text-decoration: none; }
     .course-list a:hover { text-decoration: underline; }
- 
+
     .platform-tag {
         font-family: var(--font-mono);
         font-size: 0.72rem;
         color: var(--moss);
     }
- 
+
     .progress-tag {
         font-family: var(--font-mono);
         font-size: 0.75rem;
@@ -439,7 +567,7 @@
         display: inline-block;
         margin-bottom: 0.9rem;
     }
- 
+
     .question-text {
         font-family: var(--font-display);
         font-style: italic;
@@ -448,17 +576,17 @@
         color: var(--ink);
         margin: 0 0 1rem;
     }
- 
+
     @keyframes rise {
         from { opacity: 0; transform: translateY(10px); }
         to { opacity: 1; transform: translateY(0); }
     }
- 
+
     @media (prefers-reduced-motion: reduce) {
         .waypoint { animation: none; }
         button, .marker { transition: none; }
     }
- 
+
     @media (max-width: 560px) {
         .hero { padding: 3rem 1.25rem 2rem; }
         .trail { padding: 0 1.25rem 3.5rem; }
@@ -471,15 +599,35 @@
 </style>
 </head>
 <body>
- 
+
+    <div class="topbar">
+        <span>Signed in as <strong>{{ request.user.username }}</strong></span>
+        <span>
+            <a href="{% url 'history' %}">My History</a>
+            <a href="{% url 'logout' %}">Log Out</a>
+        </span>
+    </div>
+
     <header class="hero">
         <span class="eyebrow">Trailmark</span>
         <h1>Find your way into the career you want</h1>
-        <p>Ask questions, get a roadmap, check your resume, and practice interviews — one trail, every waypoint you need.</p>
+        <p>Ask questions, get a roadmap, check your resume, close your skill gaps, and practice interviews — one trail, every waypoint you need.</p>
+
+        <div class="progress-ring-wrap">
+            <svg class="progress-ring" viewBox="0 0 100 100">
+                <circle class="progress-ring-bg" cx="50" cy="50" r="45"></circle>
+                <circle class="progress-ring-fill" cx="50" cy="50" r="45"
+                    style="stroke-dasharray: {{ trail_circumference }}; stroke-dashoffset: {{ trail_dash_offset }};"></circle>
+            </svg>
+            <div class="progress-ring-text">
+                <span class="progress-ring-percent">{{ trail_progress_percent }}%</span>
+                <span class="progress-ring-sub">{{ waypoints_done }} of 4 waypoints explored</span>
+            </div>
+        </div>
     </header>
- 
+
     <main class="trail">
- 
+
         <!-- Waypoint 1: Chatbot -->
         <section class="waypoint{% if answer %} waypoint--reached{% endif %}">
             <div class="marker">01</div>
@@ -487,34 +635,45 @@
                 <h2>Ask a question</h2>
                 <span class="waypoint-label">Career &amp; study guidance</span>
             </div>
- 
+
             <div class="card">
-                <form method="POST">
+                <form method="POST" action="{% url 'ask_question' %}">
                     {% csrf_token %}
                     <div class="field-row">
                         <input type="text" name="question" placeholder="e.g. How do I become a Data Scientist?">
                         <button type="submit">Ask</button>
                     </div>
                 </form>
- 
+
                 {% if answer %}
                 <div class="answer-block">
                     <span class="answer-label">Answer</span>
                     <div class="ai-content">{{ answer|safe }}</div>
                 </div>
                 {% endif %}
- 
+
                 {% if roadmap %}
                 <div class="answer-block">
                     <span class="answer-label">📍 Career Roadmap</span>
-                    <ol class="roadmap-list">
+
+                    <div class="roadmap-progress">
+                        <div class="roadmap-progress-label">
+                            <span>Path mapped out</span>
+                            <span>{{ roadmap|length }} steps</span>
+                        </div>
+                        <div class="roadmap-progress-track">
+                            <div class="roadmap-progress-fill"></div>
+                        </div>
+                    </div>
+
+                    <ol class="roadmap-timeline">
                         {% for step in roadmap %}
                         <li>{{ step }}</li>
                         {% endfor %}
                     </ol>
                 </div>
                 {% endif %}
- 
+
                 {% if courses %}
                 <div class="answer-block">
                     <span class="answer-label">📚 Recommended Courses</span>
@@ -530,7 +689,7 @@
                 {% endif %}
             </div>
         </section>
- 
+
         <!-- Waypoint 2: Resume Analysis -->
         <section class="waypoint{% if resume_feedback %} waypoint--reached{% endif %}">
             <div class="marker">02</div>
@@ -538,16 +697,16 @@
                 <h2>Check your resume</h2>
                 <span class="waypoint-label">PDF or DOCX</span>
             </div>
- 
+
             <div class="card">
-                <form method="POST" enctype="multipart/form-data">
+                <form method="POST" action="{% url 'analyze_resume' %}" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="field-row">
                         <input type="file" name="resume_file" accept=".pdf,.docx">
-                        <button type="submit" name="analyze_resume">Analyze Resume</button>
+                        <button type="submit">Analyze Resume</button>
                     </div>
                 </form>
- 
+
                 {% if resume_feedback %}
                 <div class="answer-block">
                     <span class="answer-label">📋 Resume Feedback</span>
@@ -556,18 +715,52 @@
                 {% endif %}
             </div>
         </section>
- 
-        <!-- Waypoint 3: Interview Practice -->
-        <section class="waypoint{% if interview_question or interview_feedback %} waypoint--reached{% endif %}">
+
+        <!-- Waypoint 3: Skill-Gap Analysis -->
+        <section class="waypoint{% if skill_gap_feedback %} waypoint--reached{% endif %}">
             <div class="marker">03</div>
+            <div class="waypoint-head">
+                <h2>Find your skill gap</h2>
+                <span class="waypoint-label">Resume vs. target role</span>
+            </div>
+
+            <div class="card">
+                <form method="POST" action="{% url 'analyze_skill_gap' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="field-row">
+                        <input type="file" name="skill_gap_resume" accept=".pdf,.docx">
+                        <select name="skill_gap_role">
+                            {% for role in roles %}
+                            <option value="{{ role }}" {% if role == skill_gap_role %}selected{% endif %}>{{ role }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <p class="field-note">Upload your resume, pick the role you're aiming for, and see exactly what's missing.</p>
+                    <div class="field-row">
+                        <button type="submit">Find My Skill Gap</button>
+                    </div>
+                </form>
+
+                {% if skill_gap_feedback %}
+                <div class="answer-block">
+                    <span class="answer-label">🧭 Skill Gap Report — {{ skill_gap_role }}</span>
+                    <div class="ai-content">{{ skill_gap_feedback|safe }}</div>
+                </div>
+                {% endif %}
+            </div>
+        </section>
+
+        <!-- Waypoint 4: Interview Practice -->
+        <section class="waypoint{% if interview_question or interview_feedback %} waypoint--reached{% endif %}">
+            <div class="marker">04</div>
             <div class="waypoint-head">
                 <h2>Practice an interview</h2>
                 <span class="waypoint-label">5 questions, real feedback</span>
             </div>
- 
+
             <div class="card">
                 {% if not interview_question and not interview_feedback %}
-                <form method="POST">
+                <form method="POST" action="{% url 'start_interview' %}">
                     {% csrf_token %}
                     <div class="field-row">
                         <select name="interview_role">
@@ -575,29 +768,29 @@
                             <option value="{{ role }}">{{ role }}</option>
                             {% endfor %}
                         </select>
-                        <button type="submit" name="start_interview">Start Mock Interview</button>
+                        <button type="submit">Start Mock Interview</button>
                     </div>
                 </form>
                 {% endif %}
- 
+
                 {% if interview_question %}
                 <span class="progress-tag">{{ interview_progress }} — {{ interview_role }}</span>
                 <p class="question-text">"{{ interview_question }}"</p>
-                <form method="POST">
+                <form method="POST" action="{% url 'submit_interview_answer' %}">
                     {% csrf_token %}
                     <textarea name="interview_answer" rows="4" placeholder="Type your answer here..."></textarea>
                     <div class="field-row" style="margin-top: 0.75rem;">
-                        <button type="submit" name="interview_answer">Submit Answer</button>
+                        <button type="submit">Submit Answer</button>
                     </div>
                 </form>
                 {% endif %}
- 
+
                 {% if interview_feedback %}
                 <div class="answer-block" style="border-top: none; padding-top: 0; margin-top: 0;">
                     <span class="answer-label">✅ Interview Feedback</span>
                     <div class="ai-content">{{ interview_feedback|safe }}</div>
                 </div>
-                <form method="POST" style="margin-top: 1.25rem;">
+                <form method="POST" action="{% url 'start_interview' %}" style="margin-top: 1.25rem;">
                     {% csrf_token %}
                     <div class="field-row">
                         <select name="interview_role">
@@ -605,15 +798,14 @@
                             <option value="{{ role }}">{{ role }}</option>
                             {% endfor %}
                         </select>
-                        <button type="submit" name="start_interview" class="secondary">Try Another Role</button>
+                        <button type="submit" class="secondary">Try Another Role</button>
                     </div>
                 </form>
                 {% endif %}
             </div>
         </section>
- 
+
     </main>
- 
+
 </body>
 </html>
- 

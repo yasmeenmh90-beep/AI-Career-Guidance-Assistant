@@ -34,5 +34,65 @@
       "Learn deployment (Vercel, Netlify, or Render)",
       "Apply for junior web developer roles or freelance projects"
     ]
+  },
+  "Cloud Engineer": {
+    "steps": [
+      "Learn networking and Linux fundamentals",
+      "Learn a scripting language (Python or Bash)",
+      "Understand core cloud concepts (compute, storage, networking)",
+      "Pick a primary cloud platform (AWS, Azure, or GCP) and learn its core services",
+      "Learn Infrastructure as Code (Terraform or CloudFormation)",
+      "Learn containers and orchestration (Docker, Kubernetes)",
+      "Earn a foundational cloud certification (AWS CCP, AZ-900, or GCP ACE)",
+      "Apply for cloud support or junior cloud engineer roles"
+    ]
+  },
+  "Cybersecurity Analyst": {
+    "steps": [
+      "Learn networking fundamentals (TCP/IP, DNS, firewalls)",
+      "Learn operating systems basics (Linux and Windows)",
+      "Study core security concepts (CIA triad, threat types, risk management)",
+      "Learn to use SIEM tools and log analysis",
+      "Learn Python and SQL for security automation",
+      "Practice with labs (TryHackMe, Hack The Box)",
+      "Earn a foundational certification (Google Cybersecurity, CompTIA Security+)",
+      "Apply for SOC analyst or junior cybersecurity roles"
+    ]
+  },
+  "Data Analyst": {
+    "steps": [
+      "Learn spreadsheets (Excel/Google Sheets) and SQL fundamentals",
+      "Learn data cleaning and exploratory data analysis",
+      "Learn a visualization tool (Tableau or Power BI)",
+      "Learn Python or R for data analysis",
+      "Study basic statistics and A/B testing",
+      "Build a portfolio with real datasets",
+      "Learn to present insights and tell data stories",
+      "Apply for junior data analyst roles"
+    ]
+  },
+  "UI/UX Designer": {
+    "steps": [
+      "Learn design fundamentals (color, typography, layout)",
+      "Study the UX design process (empathize, define, ideate, prototype, test)",
+      "Learn wireframing and prototyping in Figma",
+      "Learn user research methods (interviews, usability testing)",
+      "Study accessibility and inclusive design",
+      "Build 3-4 case study projects for your portfolio",
+      "Learn to present design decisions and rationale",
+      "Apply for junior UI/UX designer roles"
+    ]
+  },
+  "DevOps Engineer": {
+    "steps": [
+      "Learn Linux fundamentals and shell scripting",
+      "Learn a programming language (Python)",
+      "Learn Git and version control workflows",
+      "Study Agile and Scrum methodologies",
+      "Learn containers (Docker) and orchestration (Kubernetes)",
+      "Learn CI/CD pipelines and automation tools",
+      "Learn cloud fundamentals (AWS, Azure, or GCP)",
+      "Apply for junior DevOps or platform engineer roles"
+    ]
   }
 }
