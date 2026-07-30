@@ -1,49 +1,619 @@
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Career Guidance Chatbot</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trailmark — AI Career & Study Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+ 
+<style>
+    :root {
+        --bg: #F6F3EA;
+        --surface: #FFFFFF;
+        --ink: #1E2B22;
+        --ink-soft: #4A594E;
+        --pine: #2F4B3C;
+        --pine-light: #45654F;
+        --blaze: #E2632A;
+        --blaze-dark: #C24F1D;
+        --moss: #7C9083;
+        --line: #DED7C4;
+        --focus: #2E6FEE;
+ 
+        --font-display: 'Fraunces', serif;
+        --font-body: 'Inter', sans-serif;
+        --font-mono: 'IBM Plex Mono', monospace;
+    }
+ 
+    * { box-sizing: border-box; }
+ 
+    body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: var(--font-body);
+        line-height: 1.55;
+        -webkit-font-smoothing: antialiased;
+    }
+ 
+    a { color: var(--pine); }
+ 
+    ::selection { background: var(--blaze); color: #fff; }
+ 
+    .hero {
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 4.5rem 1.5rem 3rem;
+        text-align: left;
+    }
+ 
+    .eyebrow {
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--blaze);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+ 
+    .eyebrow::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--blaze);
+    }
+ 
+    .hero h1 {
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: clamp(2.1rem, 4.5vw, 3rem);
+        line-height: 1.08;
+        margin: 0 0 1rem;
+        color: var(--pine);
+    }
+ 
+    .hero p {
+        font-size: 1.05rem;
+        color: var(--ink-soft);
+        max-width: 46ch;
+        margin: 0;
+    }
+ 
+    .trail {
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 0 1.5rem 5rem;
+        position: relative;
+    }
+ 
+    .trail::before {
+        content: "";
+        position: absolute;
+        top: 1.4rem;
+        bottom: 3rem;
+        left: 1.5rem;
+        width: 2px;
+        background-image: linear-gradient(var(--moss) 60%, transparent 0%);
+        background-position: left;
+        background-size: 2px 12px;
+        background-repeat: repeat-y;
+        opacity: 0.55;
+    }
+ 
+    .waypoint {
+        position: relative;
+        padding-left: 3.75rem;
+        margin-bottom: 2.75rem;
+        animation: rise 0.5s ease both;
+    }
+ 
+    .waypoint:last-child { margin-bottom: 0; }
+ 
+    .marker {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 3rem;
+        height: 3rem;
+        border-radius: 50%;
+        background: var(--surface);
+        border: 2px solid var(--moss);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--font-mono);
+        font-size: 0.95rem;
+        color: var(--moss);
+        z-index: 1;
+        transition: all 0.3s ease;
+    }
+ 
+    .waypoint--reached .marker {
+        background: var(--pine);
+        border-color: var(--pine);
+        color: #fff;
+    }
+ 
+    .waypoint-head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-bottom: 1rem;
+        padding-top: 0.55rem;
+    }
+ 
+    .waypoint-head h2 {
+        font-family: var(--font-display);
+        font-weight: 600;
+        font-size: 1.4rem;
+        margin: 0;
+        color: var(--pine);
+    }
+ 
+    .waypoint-label {
+        font-family: var(--font-mono);
+        font-size: 0.7rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--moss);
+    }
+ 
+    .card {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 1.5rem;
+    }
+ 
+    .card + .card { margin-top: 1rem; }
+ 
+    .field-row {
+        display: flex;
+        gap: 0.6rem;
+        flex-wrap: wrap;
+    }
+ 
+    input[type="text"],
+    textarea,
+    select {
+        font-family: var(--font-body);
+        font-size: 0.95rem;
+        color: var(--ink);
+        background: var(--bg);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 0.75rem 1rem;
+        flex: 1;
+        min-width: 200px;
+    }
+ 
+    textarea { width: 100%; resize: vertical; font-family: var(--font-body); }
+ 
+    input[type="text"]:focus,
+    textarea:focus,
+    select:focus,
+    button:focus-visible,
+    input[type="file"]:focus-visible {
+        outline: 2px solid var(--focus);
+        outline-offset: 2px;
+    }
+ 
+    input[type="file"] {
+        font-family: var(--font-body);
+        font-size: 0.9rem;
+    }
+ 
+    button {
+        font-family: var(--font-body);
+        font-weight: 600;
+        font-size: 0.92rem;
+        background: var(--blaze);
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        padding: 0.75rem 1.4rem;
+        cursor: pointer;
+        transition: background 0.15s ease, transform 0.1s ease;
+        white-space: nowrap;
+    }
+ 
+    button:hover { background: var(--blaze-dark); }
+    button:active { transform: translateY(1px); }
+ 
+    button.secondary {
+        background: transparent;
+        color: var(--pine);
+        border: 1px solid var(--pine);
+    }
+ 
+    button.secondary:hover { background: var(--pine); color: #fff; }
+ 
+    .answer-block {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px dashed var(--line);
+    }
+ 
+    .answer-label {
+        font-family: var(--font-mono);
+        font-size: 0.7rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--blaze);
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+ 
+    /* ---------- Rendered AI markdown content ---------- */
+    .ai-content {
+        color: var(--ink);
+        font-size: 0.96rem;
+    }
+ 
+    .ai-content > *:first-child { margin-top: 0; }
+    .ai-content > *:last-child { margin-bottom: 0; }
+ 
+    .ai-content p {
+        margin: 0 0 0.85rem;
+    }
+ 
+    .ai-content h1,
+    .ai-content h2,
+    .ai-content h3,
+    .ai-content h4 {
+        font-family: var(--font-display);
+        font-weight: 600;
+        color: var(--pine);
+        margin: 1.3rem 0 0.6rem;
+        line-height: 1.3;
+    }
+ 
+    .ai-content h1 { font-size: 1.25rem; }
+    .ai-content h2 { font-size: 1.15rem; }
+    .ai-content h3 { font-size: 1.05rem; }
+    .ai-content h4 {
+        font-size: 0.95rem;
+        font-family: var(--font-body);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--blaze);
+    }
+ 
+    .ai-content strong {
+        color: var(--pine);
+        font-weight: 600;
+    }
+ 
+    .ai-content ul,
+    .ai-content ol {
+        margin: 0 0 0.9rem;
+        padding-left: 1.3rem;
+    }
+ 
+    .ai-content li {
+        margin-bottom: 0.4rem;
+        padding-left: 0.2rem;
+    }
+ 
+    .ai-content ul { list-style: none; margin-left: 0; padding-left: 0; }
+ 
+    .ai-content ul li {
+        position: relative;
+        padding-left: 1.3rem;
+    }
+ 
+    .ai-content ul li::before {
+        content: "";
+        position: absolute;
+        left: 0.15rem;
+        top: 0.55rem;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--blaze);
+    }
+ 
+    .ai-content ol {
+        counter-reset: ai-step;
+        list-style: none;
+        padding-left: 0;
+    }
+ 
+    .ai-content ol li {
+        counter-increment: ai-step;
+        position: relative;
+        padding-left: 2rem;
+    }
+ 
+    .ai-content ol li::before {
+        content: counter(ai-step);
+        position: absolute;
+        left: 0;
+        top: 0.05rem;
+        width: 1.4rem;
+        height: 1.4rem;
+        border-radius: 50%;
+        background: var(--bg);
+        border: 1px solid var(--moss);
+        color: var(--pine);
+        font-family: var(--font-mono);
+        font-size: 0.7rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+ 
+    .ai-content code {
+        font-family: var(--font-mono);
+        font-size: 0.85em;
+        background: var(--bg);
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        padding: 0.1rem 0.35rem;
+    }
+ 
+    .ai-content hr {
+        border: none;
+        border-top: 1px dashed var(--line);
+        margin: 1.2rem 0;
+    }
+ 
+    .roadmap-list {
+        list-style: none;
+        margin: 0.75rem 0 0;
+        padding: 0;
+        counter-reset: step;
+    }
+ 
+    .roadmap-list li {
+        counter-increment: step;
+        position: relative;
+        padding: 0.6rem 0 0.6rem 2.4rem;
+        border-bottom: 1px solid var(--line);
+        font-size: 0.95rem;
+    }
+ 
+    .roadmap-list li:last-child { border-bottom: none; }
+ 
+    .roadmap-list li::before {
+        content: counter(step);
+        position: absolute;
+        left: 0;
+        top: 0.5rem;
+        width: 1.6rem;
+        height: 1.6rem;
+        border-radius: 50%;
+        background: var(--bg);
+        border: 1px solid var(--moss);
+        color: var(--pine);
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+ 
+    .course-list {
+        list-style: none;
+        margin: 0.75rem 0 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+ 
+    .course-list li {
+        background: var(--bg);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 0.65rem 0.9rem;
+        font-size: 0.9rem;
+    }
+ 
+    .course-list a { font-weight: 600; text-decoration: none; }
+    .course-list a:hover { text-decoration: underline; }
+ 
+    .platform-tag {
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+        color: var(--moss);
+    }
+ 
+    .progress-tag {
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        color: var(--blaze);
+        background: rgba(226, 99, 42, 0.1);
+        border: 1px solid rgba(226, 99, 42, 0.3);
+        border-radius: 999px;
+        padding: 0.25rem 0.7rem;
+        display: inline-block;
+        margin-bottom: 0.9rem;
+    }
+ 
+    .question-text {
+        font-family: var(--font-display);
+        font-style: italic;
+        font-weight: 500;
+        font-size: 1.1rem;
+        color: var(--ink);
+        margin: 0 0 1rem;
+    }
+ 
+    @keyframes rise {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+ 
+    @media (prefers-reduced-motion: reduce) {
+        .waypoint { animation: none; }
+        button, .marker { transition: none; }
+    }
+ 
+    @media (max-width: 560px) {
+        .hero { padding: 3rem 1.25rem 2rem; }
+        .trail { padding: 0 1.25rem 3.5rem; }
+        .trail::before { left: 1.15rem; }
+        .waypoint { padding-left: 3rem; }
+        .marker { width: 2.4rem; height: 2.4rem; font-size: 0.8rem; }
+        .field-row { flex-direction: column; }
+        button { width: 100%; }
+    }
+</style>
 </head>
 <body>
-<h1>AI Career & Study Guidance Chatbot</h1>
-<form method="POST">
-        {% csrf_token %}
-<input type="text" name="question" placeholder="Ask me anything about your career...">
-<button type="submit">Ask</button>
-</form>
-
-    {% if answer %}
-<p><strong>Answer:</strong> {{ answer }}</p>
-    {% endif %}
-
-    {% if roadmap %}
-<h3>📍 Career Roadmap:</h3>
-<ol>
-{% for step in roadmap %}
-<li>{{ step }}</li>
-{% endfor %}
-</ol>
-    {% endif %}
-
-    {% if courses %}
-<h3>📚 Recommended Courses:</h3>
-<ul>
-{% for course in courses %}
-<li><a href="{{ course.link }}" target="_blank">{{ course.name }}</a> ({{ course.platform }})</li>
-{% endfor %}
-</ul>
-    {% endif %}
-
-<hr>
-<h2>📄 Resume Analysis</h2>
-<form method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
-    <input type="file" name="resume_file" accept=".pdf,.docx">
-    <button type="submit" name="analyze_resume">Analyze Resume</button>
-</form>
-
-    {% if resume_feedback %}
-<h3>📋 Resume Feedback:</h3>
-<p>{{ resume_feedback }}</p>
-    {% endif %}
+ 
+    <header class="hero">
+        <span class="eyebrow">Trailmark</span>
+        <h1>Find your way into the career you want</h1>
+        <p>Ask questions, get a roadmap, check your resume, and practice interviews — one trail, every waypoint you need.</p>
+    </header>
+ 
+    <main class="trail">
+ 
+        <!-- Waypoint 1: Chatbot -->
+        <section class="waypoint{% if answer %} waypoint--reached{% endif %}">
+            <div class="marker">01</div>
+            <div class="waypoint-head">
+                <h2>Ask a question</h2>
+                <span class="waypoint-label">Career &amp; study guidance</span>
+            </div>
+ 
+            <div class="card">
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="field-row">
+                        <input type="text" name="question" placeholder="e.g. How do I become a Data Scientist?">
+                        <button type="submit">Ask</button>
+                    </div>
+                </form>
+ 
+                {% if answer %}
+                <div class="answer-block">
+                    <span class="answer-label">Answer</span>
+                    <div class="ai-content">{{ answer|safe }}</div>
+                </div>
+                {% endif %}
+ 
+                {% if roadmap %}
+                <div class="answer-block">
+                    <span class="answer-label">📍 Career Roadmap</span>
+                    <ol class="roadmap-list">
+                        {% for step in roadmap %}
+                        <li>{{ step }}</li>
+                        {% endfor %}
+                    </ol>
+                </div>
+                {% endif %}
+ 
+                {% if courses %}
+                <div class="answer-block">
+                    <span class="answer-label">📚 Recommended Courses</span>
+                    <ul class="course-list">
+                        {% for course in courses %}
+                        <li>
+                            <a href="{{ course.link }}" target="_blank">{{ course.name }}</a>
+                            <span class="platform-tag"> — {{ course.platform }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+        </section>
+ 
+        <!-- Waypoint 2: Resume Analysis -->
+        <section class="waypoint{% if resume_feedback %} waypoint--reached{% endif %}">
+            <div class="marker">02</div>
+            <div class="waypoint-head">
+                <h2>Check your resume</h2>
+                <span class="waypoint-label">PDF or DOCX</span>
+            </div>
+ 
+            <div class="card">
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="field-row">
+                        <input type="file" name="resume_file" accept=".pdf,.docx">
+                        <button type="submit" name="analyze_resume">Analyze Resume</button>
+                    </div>
+                </form>
+ 
+                {% if resume_feedback %}
+                <div class="answer-block">
+                    <span class="answer-label">📋 Resume Feedback</span>
+                    <div class="ai-content">{{ resume_feedback|safe }}</div>
+                </div>
+                {% endif %}
+            </div>
+        </section>
+ 
+        <!-- Waypoint 3: Interview Practice -->
+        <section class="waypoint{% if interview_question or interview_feedback %} waypoint--reached{% endif %}">
+            <div class="marker">03</div>
+            <div class="waypoint-head">
+                <h2>Practice an interview</h2>
+                <span class="waypoint-label">5 questions, real feedback</span>
+            </div>
+ 
+            <div class="card">
+                {% if not interview_question and not interview_feedback %}
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="field-row">
+                        <select name="interview_role">
+                            {% for role in roles %}
+                            <option value="{{ role }}">{{ role }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit" name="start_interview">Start Mock Interview</button>
+                    </div>
+                </form>
+                {% endif %}
+ 
+                {% if interview_question %}
+                <span class="progress-tag">{{ interview_progress }} — {{ interview_role }}</span>
+                <p class="question-text">"{{ interview_question }}"</p>
+                <form method="POST">
+                    {% csrf_token %}
+                    <textarea name="interview_answer" rows="4" placeholder="Type your answer here..."></textarea>
+                    <div class="field-row" style="margin-top: 0.75rem;">
+                        <button type="submit" name="interview_answer">Submit Answer</button>
+                    </div>
+                </form>
+                {% endif %}
+ 
+                {% if interview_feedback %}
+                <div class="answer-block" style="border-top: none; padding-top: 0; margin-top: 0;">
+                    <span class="answer-label">✅ Interview Feedback</span>
+                    <div class="ai-content">{{ interview_feedback|safe }}</div>
+                </div>
+                <form method="POST" style="margin-top: 1.25rem;">
+                    {% csrf_token %}
+                    <div class="field-row">
+                        <select name="interview_role">
+                            {% for role in roles %}
+                            <option value="{{ role }}">{{ role }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit" name="start_interview" class="secondary">Try Another Role</button>
+                    </div>
+                </form>
+                {% endif %}
+            </div>
+        </section>
+ 
+    </main>
+ 
 </body>
 </html>
+ 
