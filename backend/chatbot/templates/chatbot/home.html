@@ -63,6 +63,25 @@
 
     .topbar a:hover { text-decoration: underline; }
 
+    .logout-form {
+        display: inline;
+        margin-left: 1rem;
+    }
+
+    .logout-link {
+        background: none;
+        border: none;
+        padding: 0;
+        color: var(--pine);
+        text-decoration: none;
+        font-weight: 600;
+        font-family: var(--font-mono);
+        font-size: 0.8rem;
+        cursor: pointer;
+    }
+
+    .logout-link:hover { text-decoration: underline; }
+
     .hero {
         max-width: 760px;
         margin: 0 auto;
@@ -604,7 +623,10 @@
         <span>Signed in as <strong>{{ request.user.username }}</strong></span>
         <span>
             <a href="{% url 'history' %}">My History</a>
-            <a href="{% url 'logout' %}">Log Out</a>
+            <form method="POST" action="{% url 'logout' %}" class="logout-form">
+                {% csrf_token %}
+                <button type="submit" class="logout-link">Log Out</button>
+            </form>
         </span>
     </div>
 
