@@ -102,10 +102,10 @@ To add a new role, add matching entries to `resources/roadmaps.json` and `resour
 
 | Name | Role |
 |---|---|
-| Yasmeen Azmat Ali | AI Chatbot, Interview Practice Mode, Django Backend, Career Roadmap Logic, UI Styling, Project Coordination |
-| Sai Krishna | Resume Analysis, Deployment, Backend/API Support |
-| Mohammed Ayaan | Resource Collection, Testing, Documentation, Content Organisation |
-| Gagan | UI/UX Design, Branding, Presentation Deck, Demo Video, Visual Assets |
+| Yasmeen Azmat Ali | 
+| Sai Krishna | |
+| Mohammed Ayaan | 
+| Gagan | 
 
 ## Hackathon
 
