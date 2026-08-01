@@ -93,14 +93,16 @@ def to_html(markdown_text):
     return markdown.markdown(markdown_text, extensions=["extra", "sane_lists"])
 
 
-def trail_progress_context(user):
-    """Shared 'how much of the app has this user explored' data, used on every
-    render of the home page regardless of which endpoint produced the result."""
+def trail_progress_context(session):
+    """Shared 'how much of the trail have you explored this visit' data, used
+    on every render of the home page. Based on the session-cached results —
+    the same ones the page is currently showing — not all-time history, so
+    the ring matches what the page actually looks like right now."""
     waypoints_done = sum([
-        ChatQuestion.objects.filter(user=user).exists(),
-        ResumeReport.objects.filter(user=user).exists(),
-        SkillGapReport.objects.filter(user=user).exists(),
-        InterviewReport.objects.filter(user=user).exists(),
+        bool(session.get("last_answer")),
+        bool(session.get("last_resume_feedback")),
+        bool(session.get("last_skill_gap_feedback")),
+        bool(session.get("last_interview_feedback")),
     ])
     radius = 45
     circumference = 2 * math.pi * radius
@@ -178,7 +180,6 @@ def render_home(request, fresh_load=False, **extra_context):
             "interview_error": None,
             "active_waypoint": None,
         }
-    context.update(trail_progress_context(request.user))
     context.update(extra_context)
 
     if "answer" in extra_context:
@@ -193,6 +194,11 @@ def render_home(request, fresh_load=False, **extra_context):
         session["last_skill_gap_role"] = extra_context.get("skill_gap_role")
     if "interview_feedback" in extra_context:
         session["last_interview_feedback"] = extra_context.get("interview_feedback")
+
+    # Compute the progress ring after the session's been updated with
+    # whatever this request just produced, so a fresh answer counts
+    # immediately instead of lagging a request behind.
+    context.update(trail_progress_context(session))
 
     return render(request, "chatbot/home.html", context)
 
