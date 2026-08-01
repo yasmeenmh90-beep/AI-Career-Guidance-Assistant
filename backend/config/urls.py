@@ -14,6 +14,11 @@ urlpatterns = [
     # Dashboard
     path('history/', views.history, name='history'),
 
+    # PDF exports
+    path('history/resume/<int:report_id>/pdf/', views.download_resume_pdf, name='download_resume_pdf'),
+    path('history/interview/<int:report_id>/pdf/', views.download_interview_pdf, name='download_interview_pdf'),
+    path('history/skill-gap/<int:report_id>/pdf/', views.download_skill_gap_pdf, name='download_skill_gap_pdf'),
+
     # Feature endpoints — one per action
     path('ask/', views.ask_question, name='ask_question'),
     path('resume/', views.analyze_resume, name='analyze_resume'),

@@ -29,6 +29,7 @@
         --moss: #7C9083;
         --line: #DED7C4;
         --focus: #2E6FEE;
+        --alert: #C1483A;
 
         --font-display: 'Fraunces', serif;
         --font-body: 'Inter', sans-serif;
@@ -47,6 +48,7 @@
         --moss: #6B8577;
         --line: #33443B;
         --focus: #6FA8FF;
+        --alert: #E07362;
     }
 
     body { transition: background 200ms ease, color 200ms ease; }
@@ -225,6 +227,45 @@
         margin-top: 0.2rem;
     }
 
+    /* ---------- Quick nav: jump to a waypoint ---------- */
+    .quick-nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 1.25rem;
+    }
+
+    .quick-nav a {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+        text-decoration: none;
+        color: var(--ink-soft);
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 0.35rem 0.8rem 0.35rem 0.55rem;
+        transition: border-color 150ms ease, color 150ms ease;
+    }
+
+    .quick-nav a:hover { border-color: var(--blaze); color: var(--blaze); }
+
+    .quick-nav-num {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 1.1rem;
+        height: 1.1rem;
+        border-radius: 50%;
+        background: var(--bg);
+        font-size: 0.62rem;
+        color: var(--moss);
+    }
+
+    .quick-nav a.is-done .quick-nav-num { background: var(--pine); color: #fff; }
+
     .trail {
         max-width: 760px;
         margin: 0 auto;
@@ -314,6 +355,43 @@
     }
 
     .card + .card { margin-top: 1rem; }
+
+    /* ---------- Error banner ---------- */
+    .error-banner {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.6rem;
+        background: rgba(193, 72, 58, 0.08);
+        border: 1px solid var(--alert);
+        border-radius: 10px;
+        color: var(--alert);
+        padding: 0.75rem 1rem;
+        font-size: 0.88rem;
+        margin-bottom: 1rem;
+    }
+
+    .error-banner-icon { flex-shrink: 0; line-height: 1.3; }
+
+    /* ---------- Loading state (shown while a form submits) ---------- */
+    button .btn-label { display: inline-flex; align-items: center; gap: 0.5rem; }
+    button .btn-spinner {
+        display: none;
+        width: 13px;
+        height: 13px;
+        border: 2px solid rgba(255,255,255,0.4);
+        border-top-color: #fff;
+        border-radius: 50%;
+        animation: spin 700ms linear infinite;
+    }
+    button.secondary .btn-spinner { border-color: rgba(47,75,60,0.25); border-top-color: var(--pine); }
+    button.is-loading .btn-spinner { display: inline-block; }
+    button.is-loading { opacity: 0.85; cursor: progress; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media (prefers-reduced-motion: reduce) {
+        .btn-spinner { animation: none; }
+    }
 
     .field-row {
         display: flex;
@@ -442,6 +520,9 @@
         cursor: pointer;
         transition: background 0.15s ease, transform 0.1s ease;
         white-space: nowrap;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
     }
 
     button:hover { background: var(--blaze-dark); }
@@ -461,6 +542,13 @@
         border-top: 1px dashed var(--line);
     }
 
+    .asked-question {
+        font-size: 0.85rem;
+        color: var(--ink-soft);
+        margin: 0 0 0.9rem;
+    }
+    .asked-question em { color: var(--pine); font-style: normal; font-weight: 600; }
+
     .answer-label {
         font-family: var(--font-mono);
         font-size: 0.7rem;
@@ -469,6 +557,52 @@
         color: var(--blaze);
         margin-bottom: 0.5rem;
         display: block;
+    }
+
+    /* ---------- Collapsible long answers ---------- */
+    .answer-block-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        margin-bottom: 0.5rem;
+    }
+    .answer-block-header .answer-label { margin-bottom: 0; }
+
+    .collapse-toggle {
+        background: var(--bg);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        width: 26px;
+        height: 26px;
+        flex-shrink: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: var(--moss);
+        padding: 0;
+    }
+    .collapse-toggle:hover { border-color: var(--blaze); color: var(--blaze); }
+    .collapse-toggle svg { width: 13px; height: 13px; transition: transform 200ms ease; }
+    .collapse-toggle[aria-expanded="false"] svg { transform: rotate(180deg); }
+
+    .collapsible-content {
+        overflow: hidden;
+        max-height: 4000px;
+        transition: max-height 350ms ease;
+        position: relative;
+    }
+    .collapsible-content[data-collapsed="true"] {
+        max-height: 150px;
+    }
+    .collapsible-content[data-collapsed="true"]::after {
+        content: "";
+        position: absolute;
+        left: 0; right: 0; bottom: 0;
+        height: 56px;
+        background: linear-gradient(to bottom, transparent, var(--surface));
+        pointer-events: none;
     }
 
     .field-note {
@@ -795,12 +929,19 @@
                 <span class="progress-ring-sub">{{ waypoints_done }} of 4 waypoints explored</span>
             </div>
         </div>
+
+        <nav class="quick-nav">
+            <a href="#waypoint-01" class="{% if answer %}is-done{% endif %}"><span class="quick-nav-num">01</span>Ask</a>
+            <a href="#waypoint-02" class="{% if resume_feedback %}is-done{% endif %}"><span class="quick-nav-num">02</span>Resume</a>
+            <a href="#waypoint-03" class="{% if skill_gap_feedback %}is-done{% endif %}"><span class="quick-nav-num">03</span>Skill Gap</a>
+            <a href="#waypoint-04" class="{% if interview_question or interview_feedback %}is-done{% endif %}"><span class="quick-nav-num">04</span>Interview</a>
+        </nav>
     </header>
 
     <main class="trail">
 
         <!-- Waypoint 1: Chatbot -->
-        <section class="waypoint{% if answer %} waypoint--reached{% endif %}">
+        <section class="waypoint{% if answer %} waypoint--reached{% endif %}" id="waypoint-01">
             <div class="marker">01</div>
             <div class="waypoint-head">
                 <h2>Ask a question</h2>
@@ -808,18 +949,29 @@
             </div>
 
             <div class="card">
-                <form method="POST" action="{% url 'ask_question' %}">
+                {% if answer_error %}
+                <div class="error-banner"><span class="error-banner-icon">⚠</span><span>{{ answer_error }}</span></div>
+                {% endif %}
+                <form method="POST" action="{% url 'ask_question' %}" class="js-async-form">
                     {% csrf_token %}
                     <div class="field-row">
                         <input type="text" name="question" placeholder="e.g. How do I become a Data Scientist?">
-                        <button type="submit">Ask</button>
+                        <button type="submit"><span class="btn-label">Ask</span><span class="btn-spinner"></span></button>
                     </div>
                 </form>
 
                 {% if answer %}
                 <div class="answer-block">
-                    <span class="answer-label">Answer</span>
-                    <div class="ai-content">{{ answer|safe }}</div>
+                    {% if asked_question %}
+                    <p class="asked-question">You asked: <em>"{{ asked_question }}"</em></p>
+                    {% endif %}
+                    <div class="answer-block-header">
+                        <span class="answer-label">Answer</span>
+                        <button type="button" class="collapse-toggle" data-collapse-toggle aria-expanded="true" aria-label="Collapse answer">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+                        </button>
+                    </div>
+                    <div class="ai-content collapsible-content" data-collapsed="false">{{ answer|safe }}</div>
                 </div>
                 {% endif %}
 
@@ -862,7 +1014,7 @@
         </section>
 
         <!-- Waypoint 2: Resume Analysis -->
-        <section class="waypoint{% if resume_feedback %} waypoint--reached{% endif %}">
+        <section class="waypoint{% if resume_feedback %} waypoint--reached{% endif %}" id="waypoint-02">
             <div class="marker">02</div>
             <div class="waypoint-head">
                 <h2>Check your resume</h2>
@@ -870,7 +1022,10 @@
             </div>
 
             <div class="card">
-                <form method="POST" action="{% url 'analyze_resume' %}" enctype="multipart/form-data">
+                {% if resume_error %}
+                <div class="error-banner"><span class="error-banner-icon">⚠</span><span>{{ resume_error }}</span></div>
+                {% endif %}
+                <form method="POST" action="{% url 'analyze_resume' %}" enctype="multipart/form-data" class="js-async-form">
                     {% csrf_token %}
                     <div class="dropzone" id="dropzone-resume" tabindex="0" role="button" aria-label="Upload resume file">
                         <svg class="dropzone-check" viewBox="0 0 48 48" width="40" height="40"><circle cx="24" cy="24" r="20"/><path d="M15 24l7 7 11-12"/></svg>
@@ -881,21 +1036,26 @@
                         <input type="file" name="resume_file" accept=".pdf,.docx" class="dropzone-input" id="file-input-resume">
                     </div>
                     <div class="field-row" style="margin-top: 0.9rem;">
-                        <button type="submit">Analyze Resume</button>
+                        <button type="submit"><span class="btn-label">Analyze Resume</span><span class="btn-spinner"></span></button>
                     </div>
                 </form>
 
                 {% if resume_feedback %}
                 <div class="answer-block">
-                    <span class="answer-label">📋 Resume Feedback</span>
-                    <div class="ai-content">{{ resume_feedback|safe }}</div>
+                    <div class="answer-block-header">
+                        <span class="answer-label">📋 Resume Feedback</span>
+                        <button type="button" class="collapse-toggle" data-collapse-toggle aria-expanded="true" aria-label="Collapse feedback">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+                        </button>
+                    </div>
+                    <div class="ai-content collapsible-content" data-collapsed="false">{{ resume_feedback|safe }}</div>
                 </div>
                 {% endif %}
             </div>
         </section>
 
         <!-- Waypoint 3: Skill-Gap Analysis -->
-        <section class="waypoint{% if skill_gap_feedback %} waypoint--reached{% endif %}">
+        <section class="waypoint{% if skill_gap_feedback %} waypoint--reached{% endif %}" id="waypoint-03">
             <div class="marker">03</div>
             <div class="waypoint-head">
                 <h2>Find your skill gap</h2>
@@ -903,7 +1063,10 @@
             </div>
 
             <div class="card">
-                <form method="POST" action="{% url 'analyze_skill_gap' %}" enctype="multipart/form-data">
+                {% if skill_gap_error %}
+                <div class="error-banner"><span class="error-banner-icon">⚠</span><span>{{ skill_gap_error }}</span></div>
+                {% endif %}
+                <form method="POST" action="{% url 'analyze_skill_gap' %}" enctype="multipart/form-data" class="js-async-form">
                     {% csrf_token %}
                     <div class="dropzone" id="dropzone-skill-gap" tabindex="0" role="button" aria-label="Upload resume file">
                         <svg class="dropzone-check" viewBox="0 0 48 48" width="40" height="40"><circle cx="24" cy="24" r="20"/><path d="M15 24l7 7 11-12"/></svg>
@@ -922,21 +1085,26 @@
                     </div>
                     <p class="field-note">Upload your resume, pick the role you're aiming for, and see exactly what's missing.</p>
                     <div class="field-row">
-                        <button type="submit">Find My Skill Gap</button>
+                        <button type="submit"><span class="btn-label">Find My Skill Gap</span><span class="btn-spinner"></span></button>
                     </div>
                 </form>
 
                 {% if skill_gap_feedback %}
                 <div class="answer-block">
-                    <span class="answer-label">🧭 Skill Gap Report — {{ skill_gap_role }}</span>
-                    <div class="ai-content">{{ skill_gap_feedback|safe }}</div>
+                    <div class="answer-block-header">
+                        <span class="answer-label">🧭 Skill Gap Report — {{ skill_gap_role }}</span>
+                        <button type="button" class="collapse-toggle" data-collapse-toggle aria-expanded="true" aria-label="Collapse report">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+                        </button>
+                    </div>
+                    <div class="ai-content collapsible-content" data-collapsed="false">{{ skill_gap_feedback|safe }}</div>
                 </div>
                 {% endif %}
             </div>
         </section>
 
         <!-- Waypoint 4: Interview Practice -->
-        <section class="waypoint{% if interview_question or interview_feedback %} waypoint--reached{% endif %}">
+        <section class="waypoint{% if interview_question or interview_feedback %} waypoint--reached{% endif %}" id="waypoint-04">
             <div class="marker">04</div>
             <div class="waypoint-head">
                 <h2>Practice an interview</h2>
@@ -944,8 +1112,12 @@
             </div>
 
             <div class="card">
+                {% if interview_error %}
+                <div class="error-banner"><span class="error-banner-icon">⚠</span><span>{{ interview_error }}</span></div>
+                {% endif %}
+
                 {% if not interview_question and not interview_feedback %}
-                <form method="POST" action="{% url 'start_interview' %}">
+                <form method="POST" action="{% url 'start_interview' %}" class="js-async-form">
                     {% csrf_token %}
                     <div class="field-row">
                         <select name="interview_role">
@@ -953,7 +1125,7 @@
                             <option value="{{ role }}">{{ role }}</option>
                             {% endfor %}
                         </select>
-                        <button type="submit">Start Mock Interview</button>
+                        <button type="submit"><span class="btn-label">Start Mock Interview</span><span class="btn-spinner"></span></button>
                     </div>
                 </form>
                 {% endif %}
@@ -961,21 +1133,26 @@
                 {% if interview_question %}
                 <span class="progress-tag">{{ interview_progress }} — {{ interview_role }}</span>
                 <p class="question-text">"{{ interview_question }}"</p>
-                <form method="POST" action="{% url 'submit_interview_answer' %}">
+                <form method="POST" action="{% url 'submit_interview_answer' %}" class="js-async-form">
                     {% csrf_token %}
                     <textarea name="interview_answer" rows="4" placeholder="Type your answer here..."></textarea>
                     <div class="field-row" style="margin-top: 0.75rem;">
-                        <button type="submit">Submit Answer</button>
+                        <button type="submit"><span class="btn-label">Submit Answer</span><span class="btn-spinner"></span></button>
                     </div>
                 </form>
                 {% endif %}
 
                 {% if interview_feedback %}
                 <div class="answer-block" style="border-top: none; padding-top: 0; margin-top: 0;">
-                    <span class="answer-label">✅ Interview Feedback</span>
-                    <div class="ai-content">{{ interview_feedback|safe }}</div>
+                    <div class="answer-block-header">
+                        <span class="answer-label">✅ Interview Feedback</span>
+                        <button type="button" class="collapse-toggle" data-collapse-toggle aria-expanded="true" aria-label="Collapse feedback">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+                        </button>
+                    </div>
+                    <div class="ai-content collapsible-content" data-collapsed="false">{{ interview_feedback|safe }}</div>
                 </div>
-                <form method="POST" action="{% url 'start_interview' %}" style="margin-top: 1.25rem;">
+                <form method="POST" action="{% url 'start_interview' %}" style="margin-top: 1.25rem;" class="js-async-form">
                     {% csrf_token %}
                     <div class="field-row">
                         <select name="interview_role">
@@ -983,7 +1160,7 @@
                             <option value="{{ role }}">{{ role }}</option>
                             {% endfor %}
                         </select>
-                        <button type="submit" class="secondary">Try Another Role</button>
+                        <button type="submit" class="secondary"><span class="btn-label">Try Another Role</span><span class="btn-spinner"></span></button>
                     </div>
                 </form>
                 {% endif %}
@@ -1082,6 +1259,72 @@
             wireDropzone("dropzone-resume", "file-input-resume");
             wireDropzone("dropzone-skill-gap", "file-input-skill-gap");
         })();
+
+        // ---------- Loading state on submit ----------
+        // Full-page POST forms still take a couple seconds (AI calls) — give
+        // the user something to look at instead of a frozen button.
+        (function () {
+            var forms = document.querySelectorAll(".js-async-form");
+            forms.forEach(function (form) {
+                form.addEventListener("submit", function () {
+                    var btn = form.querySelector("button[type='submit']");
+                    if (!btn || btn.classList.contains("is-loading")) return;
+                    // Defer to the next tick — disabling fields synchronously
+                    // inside the submit handler stops the browser from
+                    // including their values in the request that's about
+                    // to be sent (this bit us with both the CSRF token and
+                    // the actual question/file fields).
+                    setTimeout(function () {
+                        btn.classList.add("is-loading");
+                        btn.disabled = true;
+                        var inputs = form.querySelectorAll("input:not([type='hidden']), textarea, select");
+                        inputs.forEach(function (el) { el.disabled = true; });
+                    }, 0);
+                });
+            });
+        })();
+
+        // ---------- Collapse / expand long answers ----------
+        (function () {
+            var toggles = document.querySelectorAll("[data-collapse-toggle]");
+            toggles.forEach(function (btn) {
+                var content = btn.closest(".answer-block").querySelector(".collapsible-content");
+                if (!content) return;
+
+                // Only show the toggle if there's actually enough content
+                // to be worth collapsing.
+                if (content.scrollHeight < 220) {
+                    btn.style.display = "none";
+                    return;
+                }
+
+                btn.addEventListener("click", function () {
+                    var isCollapsed = content.getAttribute("data-collapsed") === "true";
+                    content.setAttribute("data-collapsed", isCollapsed ? "false" : "true");
+                    btn.setAttribute("aria-expanded", isCollapsed ? "true" : "false");
+                    if (isCollapsed) {
+                        // expanding — nothing else to do, CSS handles the height
+                    } else {
+                        // collapsing — bring the card back into view so the
+                        // user doesn't lose their place
+                        btn.scrollIntoView({ behavior: "smooth", block: "nearest" });
+                    }
+                });
+            });
+        })();
+
+        // ---------- Scroll to the section that just got a new result ----------
+        // Full-page POST/reload would otherwise dump the user back at the
+        // top of the page after every action.
+        {% if active_waypoint %}
+        (function () {
+            var target = document.getElementById("{{ active_waypoint }}");
+            if (target) {
+                var rect = target.getBoundingClientRect();
+                window.scrollTo({ top: window.scrollY + rect.top - 90, left: 0, behavior: "auto" });
+            }
+        })();
+        {% endif %}
     </script>
 
 </body>

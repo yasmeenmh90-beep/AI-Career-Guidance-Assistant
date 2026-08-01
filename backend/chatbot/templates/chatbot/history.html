@@ -7,14 +7,28 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+
+<script>
+    (function () {
+        var saved = localStorage.getItem("trailmark-theme");
+        var theme = saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        document.documentElement.setAttribute("data-theme", theme);
+    })();
+</script>
 <style>
     :root {
         --bg: #F6F3EA; --surface: #FFFFFF; --ink: #1E2B22; --ink-soft: #4A594E;
-        --pine: #2F4B3C; --blaze: #E2632A; --blaze-dark: #C24F1D;
+        --pine: #2F4B3C; --pine-light: #5A7A68; --blaze: #E2632A; --blaze-dark: #C24F1D;
         --moss: #7C9083; --line: #DED7C4; --focus: #2E6FEE;
         --font-display: 'Fraunces', serif; --font-body: 'Inter', sans-serif;
         --font-mono: 'IBM Plex Mono', monospace;
     }
+    [data-theme="dark"] {
+        --bg: #16211C; --surface: #1E2B22; --ink: #F2F0E8; --ink-soft: #B9C4BB;
+        --pine: #8FBBA0; --pine-light: #A8CDBA; --blaze: #F0A15C; --blaze-dark: #F5C27A;
+        --moss: #6B8577; --line: #33443B; --focus: #6FA8FF;
+    }
+    body { transition: background 200ms ease, color 200ms ease; }
     * { box-sizing: border-box; }
     body {
         margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-body);
@@ -27,6 +41,15 @@
     }
     .topbar a { color: var(--pine); text-decoration: none; font-weight: 600; }
     .topbar a:hover { text-decoration: underline; }
+    .theme-toggle {
+        display: inline-flex; align-items: center; justify-content: center;
+        width: 30px; height: 30px; margin-left: 1rem; border-radius: 8px;
+        border: 1px solid var(--line); background: transparent; color: var(--moss);
+        cursor: pointer; vertical-align: middle;
+        transition: border-color 150ms ease, color 150ms ease, background 150ms ease;
+    }
+    .theme-toggle:hover { border-color: var(--blaze); color: var(--blaze); background: var(--bg); }
+    .theme-toggle svg { width: 16px; height: 16px; }
     .hero { max-width: 760px; margin: 0 auto; padding: 2rem 1.5rem 2.5rem; }
     .eyebrow {
         font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.18em;
@@ -39,29 +62,71 @@
 
     .chart-card {
         background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
-        padding: 1.5rem; margin-bottom: 2.5rem;
+        padding: 1.5rem; margin-bottom: 2rem;
     }
     .chart-title {
         font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.08em;
-        text-transform: uppercase; color: var(--blaze); margin-bottom: 1.1rem; display: block;
+        text-transform: uppercase; color: var(--blaze); margin-bottom: 0.3rem; display: block;
     }
-    .bar-row {
-        display: flex; align-items: center; gap: 0.9rem; margin-bottom: 0.9rem;
+    .chart-subtitle {
+        font-size: 1.05rem; font-family: var(--font-display); font-weight: 600;
+        color: var(--pine); margin: 0 0 1.3rem;
     }
-    .bar-row:last-child { margin-bottom: 0; }
-    .bar-label {
-        width: 90px; flex-shrink: 0; font-size: 0.85rem; color: var(--ink-soft);
+    .chart-empty { color: var(--moss); font-size: 0.85rem; font-style: italic; margin: 0; }
+
+    /* ---------- Activity Breakdown: donut chart ---------- */
+    .donut-row {
+        display: flex; align-items: center; gap: 2rem; flex-wrap: wrap;
     }
-    .bar-track {
-        flex: 1; height: 20px; background: var(--bg); border: 1px solid var(--line);
-        border-radius: 999px; overflow: hidden;
+    .donut-svg { flex-shrink: 0; transform: rotate(-90deg); width: 132px; height: 132px; }
+    .donut-svg circle { transition: stroke-dashoffset 600ms ease; }
+    .donut-track { fill: none; stroke: var(--bg); stroke-width: 14; }
+    .donut-segment { fill: none; stroke-width: 14; stroke-linecap: butt; }
+    .donut-center-wrap { position: relative; }
+    .donut-total {
+        position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        text-align: center; pointer-events: none;
     }
-    .bar-fill {
-        height: 100%; background: var(--blaze); border-radius: 999px;
+    .donut-total-num {
+        display: block; font-family: var(--font-display); font-weight: 700;
+        font-size: 1.7rem; color: var(--pine); line-height: 1;
     }
-    .bar-count {
-        width: 26px; flex-shrink: 0; text-align: right; font-family: var(--font-mono);
-        font-size: 0.8rem; color: var(--pine); font-weight: 600;
+    .donut-total-label {
+        display: block; font-family: var(--font-mono); font-size: 0.6rem;
+        letter-spacing: 0.06em; text-transform: uppercase; color: var(--moss); margin-top: 0.2rem;
+    }
+    .donut-legend { flex: 1; min-width: 180px; display: flex; flex-direction: column; gap: 0.65rem; }
+    .legend-row { display: flex; align-items: center; gap: 0.6rem; }
+    .legend-swatch { width: 11px; height: 11px; border-radius: 3px; flex-shrink: 0; }
+    .legend-label { flex: 1; font-size: 0.88rem; color: var(--ink); font-weight: 500; }
+    .legend-count { font-family: var(--font-mono); font-weight: 700; color: var(--pine); font-size: 0.85rem; }
+    .legend-percent { font-family: var(--font-mono); font-size: 0.72rem; color: var(--moss); width: 34px; text-align: right; }
+
+    /* ---------- Skill Gap Trends: ranked list ---------- */
+    .skill-rank-list { display: flex; flex-direction: column; gap: 0.75rem; }
+    .skill-rank-row {
+        display: flex; align-items: center; gap: 0.9rem;
+        background: var(--bg); border: 1px solid var(--line); border-radius: 10px;
+        padding: 0.7rem 0.9rem;
+    }
+    .skill-rank-badge {
+        width: 1.75rem; height: 1.75rem; flex-shrink: 0; border-radius: 50%;
+        background: var(--surface); border: 2px solid var(--pine); color: var(--pine);
+        font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700;
+        display: flex; align-items: center; justify-content: center;
+    }
+    .skill-rank-row--top .skill-rank-badge { background: var(--blaze); border-color: var(--blaze); color: #fff; }
+    .skill-rank-label { flex: 1; font-weight: 600; color: var(--ink); font-size: 0.92rem; }
+    .skill-rank-dots { display: flex; gap: 0.28rem; flex-shrink: 0; }
+    .skill-rank-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--blaze); }
+    .skill-rank-dot--empty { background: var(--line); }
+    .skill-rank-count {
+        font-family: var(--font-mono); font-size: 0.78rem; color: var(--moss);
+        width: 22px; text-align: right; flex-shrink: 0;
+    }
+
+    @media (max-width: 480px) {
+        .donut-row { flex-direction: column; align-items: flex-start; }
     }
 
     .section { margin-bottom: 2.5rem; }
@@ -79,12 +144,40 @@
     }
     .entry-title { font-weight: 600; color: var(--ink); margin-bottom: 0.3rem; }
     .empty { color: var(--moss); font-size: 0.9rem; font-style: italic; }
+
+    .entry-body {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 1rem;
+    }
+
+    .download-btn {
+        flex-shrink: 0;
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+        font-weight: 600;
+        text-decoration: none;
+        color: var(--pine);
+        border: 1px solid var(--pine);
+        border-radius: 8px;
+        padding: 0.35rem 0.7rem;
+        white-space: nowrap;
+        transition: background 150ms ease, color 150ms ease;
+    }
+
+    .download-btn:hover { background: var(--pine); color: #fff; }
 </style>
 </head>
 <body>
     <div class="topbar">
         <span>Signed in as <strong>{{ request.user.username }}</strong></span>
-        <a href="{% url 'home' %}">← Back to trail</a>
+        <span>
+            <a href="{% url 'home' %}">← Back to trail</a>
+            <button type="button" class="theme-toggle" id="theme-toggle-btn" aria-label="Toggle dark mode">
+                <svg id="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 1 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+            </button>
+        </span>
     </div>
 
     <header class="hero">
@@ -95,16 +188,65 @@
     <main class="wrap">
 
         <div class="chart-card">
-            <span class="chart-title">📊 Activity Breakdown</span>
-            {% for bar in chart_bars %}
-            <div class="bar-row">
-                <span class="bar-label">{{ bar.label }}</span>
-                <div class="bar-track">
-                    <div class="bar-fill" style="width: {{ bar.percent }}%;"></div>
+            <span class="chart-title">Overview</span>
+            <h2 class="chart-subtitle">📊 Activity Breakdown</h2>
+
+            {% if total_activity %}
+            <div class="donut-row">
+                <div class="donut-center-wrap">
+                    <svg class="donut-svg" viewBox="0 0 116 116">
+                        <circle class="donut-track" cx="58" cy="58" r="{{ donut_radius }}"></circle>
+                        {% for seg in donut_segments %}
+                        {% if seg.count > 0 %}
+                        <circle class="donut-segment" cx="58" cy="58" r="{{ donut_radius }}"
+                            style="stroke: {{ seg.color }}; stroke-dasharray: {{ seg.dasharray }}; stroke-dashoffset: {{ seg.dashoffset }};">
+                        </circle>
+                        {% endif %}
+                        {% endfor %}
+                    </svg>
+                    <div class="donut-total">
+                        <span class="donut-total-num">{{ total_activity }}</span>
+                        <span class="donut-total-label">Total</span>
+                    </div>
                 </div>
-                <span class="bar-count">{{ bar.count }}</span>
+
+                <div class="donut-legend">
+                    {% for seg in donut_segments %}
+                    <div class="legend-row">
+                        <span class="legend-swatch" style="background: {{ seg.color }};"></span>
+                        <span class="legend-label">{{ seg.label }}</span>
+                        <span class="legend-count">{{ seg.count }}</span>
+                        <span class="legend-percent">{{ seg.percent }}%</span>
+                    </div>
+                    {% endfor %}
+                </div>
             </div>
-            {% endfor %}
+            {% else %}
+            <p class="chart-empty">Ask a question, check a resume, or start an interview to see your activity here.</p>
+            {% endif %}
+        </div>
+
+        <div class="chart-card">
+            <span class="chart-title">Trend</span>
+            <h2 class="chart-subtitle">🧭 Skill Gap Trends</h2>
+
+            {% if skill_trend_rows %}
+            <div class="skill-rank-list">
+                {% for row in skill_trend_rows %}
+                <div class="skill-rank-row{% if row.rank == 1 %} skill-rank-row--top{% endif %}">
+                    <span class="skill-rank-badge">{{ row.rank }}</span>
+                    <span class="skill-rank-label">{{ row.label }}</span>
+                    <span class="skill-rank-dots">
+                        {% for d in row.dots %}<span class="skill-rank-dot"></span>{% endfor %}
+                        {% for d in row.empty_dots %}<span class="skill-rank-dot skill-rank-dot--empty"></span>{% endfor %}
+                    </span>
+                    <span class="skill-rank-count">×{{ row.count }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="chart-empty">Run a skill-gap analysis to start seeing which skills come up most often.</p>
+            {% endif %}
         </div>
 
         <div class="section">
@@ -124,7 +266,10 @@
             {% for r in resume_reports %}
             <div class="entry">
                 <div class="entry-meta">{{ r.created_at|date:"d M Y, H:i" }}</div>
-                <div class="entry-title">{{ r.filename }}</div>
+                <div class="entry-body">
+                    <div class="entry-title">{{ r.filename }}</div>
+                    <a class="download-btn" href="{% url 'download_resume_pdf' r.id %}">⬇ PDF</a>
+                </div>
             </div>
             {% empty %}
             <p class="empty">No resumes analyzed yet.</p>
@@ -136,7 +281,10 @@
             {% for s in skill_gap_reports %}
             <div class="entry">
                 <div class="entry-meta">{{ s.created_at|date:"d M Y, H:i" }}</div>
-                <div class="entry-title">{{ s.target_role }}</div>
+                <div class="entry-body">
+                    <div class="entry-title">{{ s.target_role }}</div>
+                    <a class="download-btn" href="{% url 'download_skill_gap_pdf' s.id %}">⬇ PDF</a>
+                </div>
             </div>
             {% empty %}
             <p class="empty">No skill gap reports yet.</p>
@@ -148,7 +296,10 @@
             {% for i in interview_reports %}
             <div class="entry">
                 <div class="entry-meta">{{ i.created_at|date:"d M Y, H:i" }}</div>
-                <div class="entry-title">{{ i.role }}</div>
+                <div class="entry-body">
+                    <div class="entry-title">{{ i.role }}</div>
+                    <a class="download-btn" href="{% url 'download_interview_pdf' i.id %}">⬇ PDF</a>
+                </div>
             </div>
             {% empty %}
             <p class="empty">No mock interviews completed yet.</p>
@@ -156,5 +307,33 @@
         </div>
 
     </main>
+
+    <script>
+        (function () {
+            var STORAGE_KEY = "trailmark-theme";
+            var html = document.documentElement;
+            var btn = document.getElementById("theme-toggle-btn");
+            var icon = document.getElementById("theme-icon");
+
+            var sunPath = '<path d="M12 3a6 6 0 1 0 9 9 9 9 0 1 1-9-9Z"/>';
+            var moonPath = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>';
+
+            function updateIcon() {
+                var isDark = html.getAttribute("data-theme") === "dark";
+                icon.innerHTML = isDark ? moonPath : sunPath;
+            }
+
+            if (btn) {
+                btn.addEventListener("click", function () {
+                    var next = html.getAttribute("data-theme") === "dark" ? "light" : "dark";
+                    html.setAttribute("data-theme", next);
+                    localStorage.setItem(STORAGE_KEY, next);
+                    updateIcon();
+                });
+            }
+            updateIcon();
+        })();
+    </script>
+
 </body>
 </html>

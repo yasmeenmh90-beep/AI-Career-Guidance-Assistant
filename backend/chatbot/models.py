@@ -27,6 +27,7 @@ class SkillGapReport(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="skill_gap_reports")
     target_role = models.CharField(max_length=100)
     feedback_html = models.TextField()
+    missing_skills = models.TextField(blank=True, default="")  # comma-separated, used for trend chart
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

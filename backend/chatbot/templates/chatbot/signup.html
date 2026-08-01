@@ -7,13 +7,28 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+
+<script>
+    (function () {
+        var saved = localStorage.getItem("trailmark-theme");
+        var theme = saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        document.documentElement.setAttribute("data-theme", theme);
+    })();
+</script>
+
 <style>
     :root {
         --bg: #F6F3EA; --surface: #FFFFFF; --ink: #1E2B22; --ink-soft: #4A594E;
         --pine: #2F4B3C; --blaze: #E2632A; --blaze-dark: #C24F1D;
         --moss: #7C9083; --line: #DED7C4; --focus: #2E6FEE;
         --font-display: 'Fraunces', serif; --font-body: 'Inter', sans-serif;
+
         --font-mono: 'IBM Plex Mono', monospace;
+    }
+    [data-theme="dark"] {
+        --bg: #16211C; --surface: #1E2B22; --ink: #F2F0E8; --ink-soft: #B9C4BB;
+        --pine: #8FBBA0; --blaze: #F0A15C; --blaze-dark: #F5C27A;
+        --moss: #6B8577; --line: #33443B; --focus: #6FA8FF;
     }
     * { box-sizing: border-box; }
     body {
