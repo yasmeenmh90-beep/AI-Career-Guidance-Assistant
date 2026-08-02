@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Trailmark — AI Career & Study Guide</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22%232F4B3C%22/><circle cx=%2250%22 cy=%2250%22 r=%2210%22 fill=%22%23E2632A%22/></svg>">
+
+<meta property="og:title" content="Trailmark — AI Career & Study Guidance">
+<meta property="og:description" content="Ask questions, get a roadmap, check your resume, close your skill gaps, and practice interviews — one trail, every waypoint you need.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://yasmeenmh.pythonanywhere.com">
+<meta property="og:url" content="https://yasmeenmh.pythonanywhere.com">
+<meta name="theme-color" content="#F6F3EA" id="theme-color-meta">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
@@ -20,6 +28,19 @@
 
     @view-transition {
     navigation: auto;
+}
+
+.skeleton-line {
+    height: 14px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, var(--bg) 25%, var(--line) 50%, var(--bg) 75%);
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.4s ease-in-out infinite;
+    margin-bottom: 0.6rem;
+}
+@keyframes skeleton-shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
 }
     :root {
         --bg: #F6F3EA;
@@ -38,6 +59,14 @@
         --font-display: 'Fraunces', serif;
         --font-body: 'Inter', sans-serif;
         --font-mono: 'IBM Plex Mono', monospace;
+
+        --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 24px;
+    --space-6: 32px;
+    --space-7: 48px;
     }
 
     [data-theme="dark"] {
@@ -279,6 +308,15 @@
 
     .quick-nav a.is-done .quick-nav-num { background: var(--pine); color: #fff; }
 
+.quick-nav.is-pinned {
+    position: fixed; top: 0.75rem; left: 50%; transform: translateX(-50%);
+    background: color-mix(in srgb, var(--surface) 92%, transparent);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    padding: 0.6rem 1rem; border-radius: 999px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12); z-index: 100;
+}
+
     .trail {
         max-width: 760px;
         margin: 0 auto;
@@ -307,7 +345,6 @@
         animation: rise 0.5s ease both;
     }
 
-    .waypoint:last-child { margin-bottom: 0; }
     .waypoint:last-child { margin-bottom: 0; }
 
     .waypoint:nth-child(1) { animation-delay: 0ms; }
@@ -367,11 +404,12 @@
     }
 
     .card {
-        background: var(--surface);
-        border: 1px solid var(--line);
-        border-radius: 14px;
-        padding: 1.5rem;
-    }
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04);
+}
 
     .card + .card { margin-top: 1rem; }
 
@@ -390,6 +428,18 @@
     }
 
     .error-banner-icon { flex-shrink: 0; line-height: 1.3; }
+
+.page-loader {
+    position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+    background: var(--blaze); z-index: 9999;
+    transition: width 400ms ease, opacity 300ms ease;
+}
+
+.skip-link {
+    position: absolute; top: -40px; left: 0; background: var(--blaze); color: #fff;
+    padding: 0.6rem 1rem; z-index: 10000; transition: top 150ms ease;
+}
+.skip-link:focus { top: 0; }
 
     /* ---------- Loading state (shown while a form submits) ---------- */
     button .btn-label { display: inline-flex; align-items: center; gap: 0.5rem; }
@@ -448,14 +498,6 @@
         outline: 2px solid var(--focus);
         outline-offset: 2px;
     }
-    input[type="text"]:focus,
-textarea:focus,
-select:focus,
-button:focus-visible,
-input[type="file"]:focus-visible {
-    outline: 2px solid var(--focus);
-    outline-offset: 2px;
-}
 
 input[type="text"], textarea, select {
     transition: border-color 150ms ease;
@@ -942,6 +984,10 @@ input[type="text"], textarea, select {
 </head>
 <body>
 
+    <a href="#waypoint-01" class="skip-link">Skip to content</a>
+    <div class="page-loader" id="page-loader"></div>
+
+
     <div class="topbar">
         <span>Signed in as <strong>{{ request.user.username }}</strong></span>
         <span>
@@ -1241,6 +1287,36 @@ input[type="text"], textarea, select {
 
     </main>
 
+
+    <script>
+        // ---------- Animate progress ring on load ----------
+        window.addEventListener('load', function () {
+            var ring = document.querySelector('.progress-ring-fill');
+            if (!ring) return;
+            var target = ring.style.strokeDashoffset;
+            var circumference = ring.style.strokeDasharray;
+            ring.style.strokeDashoffset = circumference;
+            requestAnimationFrame(function () {
+                setTimeout(function () { ring.style.strokeDashoffset = target; }, 100);
+            });
+        });
+    </script>
+
+    <script>
+    // ---------- Sticky quick-nav on scroll ----------
+    (function () {
+        var nav = document.querySelector('.quick-nav');
+        var hero = document.querySelector('.hero');
+        var trail = document.querySelector('.trail');
+        if (!nav || !hero || !trail) return;
+        new IntersectionObserver(function (entries) {
+            var isPinned = !entries[0].isIntersecting;
+            nav.classList.toggle('is-pinned', isPinned);
+            trail.style.paddingTop = isPinned ? '4.5rem' : '';
+        }, { threshold: 0 }).observe(hero);
+    })();
+</script>
+
     <script>
         // ---------- Dark mode toggle ----------
         (function () {
@@ -1253,9 +1329,11 @@ input[type="text"], textarea, select {
             var moonPath = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>';
 
             function updateIcon() {
-                var isDark = html.getAttribute("data-theme") === "dark";
-                icon.innerHTML = isDark ? moonPath : sunPath;
-            }
+    var isDark = html.getAttribute("data-theme") === "dark";
+    icon.innerHTML = isDark ? moonPath : sunPath;
+    var themeColorMeta = document.getElementById("theme-color-meta");
+    if (themeColorMeta) themeColorMeta.content = isDark ? "#16211C" : "#F6F3EA";
+}
 
             if (btn) {
                 btn.addEventListener("click", function () {
@@ -1336,11 +1414,14 @@ input[type="text"], textarea, select {
         // Full-page POST forms still take a couple seconds (AI calls) — give
         // the user something to look at instead of a frozen button.
         (function () {
-            var forms = document.querySelectorAll(".js-async-form");
-            forms.forEach(function (form) {
-                form.addEventListener("submit", function () {
-                    var btn = form.querySelector("button[type='submit']");
-                    if (!btn || btn.classList.contains("is-loading")) return;
+    var forms = document.querySelectorAll(".js-async-form");
+    forms.forEach(function (form) {
+        form.addEventListener("submit", function () {
+            var btn = form.querySelector("button[type='submit']");
+            if (!btn || btn.classList.contains("is-loading")) return;
+
+            var loader = document.getElementById("page-loader");
+            if (loader) loader.style.width = "70%";
                     // Defer to the next tick — disabling fields synchronously
                     // inside the submit handler stops the browser from
                     // including their values in the request that's about
@@ -1389,15 +1470,16 @@ input[type="text"], textarea, select {
         // Full-page POST/reload would otherwise dump the user back at the
         // top of the page after every action.
         (function () {
-            {% if active_waypoint %}
-            (function() {
-                var target = document.getElementById("{{ active_waypoint }}");
-                if (target) {
-                    var rect = target.getBoundingClientRect();
-                    window.scrollTo({ top: window.scrollY + rect.top - 90, left: 0, behavior: "auto" });
-                }
-            })();
-            {% endif %}
+            var activeWaypoint = "{{ active_waypoint|escapejs }}";
+            if (activeWaypoint) {
+                (function() {
+                    var target = document.getElementById(activeWaypoint);
+                    if (target) {
+                        var rect = target.getBoundingClientRect();
+                        window.scrollTo({ top: window.scrollY + rect.top - 90, left: 0, behavior: "auto" });
+                    }
+                })();
+            }
         })();
     </script>
 
