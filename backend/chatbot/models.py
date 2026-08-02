@@ -42,3 +42,37 @@ class InterviewReport(models.Model):
 
     class Meta:
         ordering = ["-created_at"]
+
+
+class CareerPath(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
+
+
+class RoadmapStep(models.Model):
+    career_path = models.ForeignKey(CareerPath, on_delete=models.CASCADE, related_name="steps")
+    step_text = models.CharField(max_length=255)
+    order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ['order']
+
+    def __str__(self):
+        return f"{self.career_path.name} - Step {self.order}"
+
+
+class Course(models.Model):
+    career_path = models.ForeignKey(CareerPath, on_delete=models.CASCADE, related_name="courses")
+    name = models.CharField(max_length=255)
+    platform = models.CharField(max_length=100)
+    link = models.URLField()
+    order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ['order']
+
+    def __str__(self):
+        return self.name
