@@ -415,6 +415,12 @@
 
     textarea { width: 100%; resize: vertical; font-family: var(--font-body); }
 
+    .resume-textarea {
+        font-family: var(--font-mono);
+        font-size: 0.82rem;
+        line-height: 1.55;
+    }
+
     input[type="text"]:focus,
     textarea:focus,
     select:focus,
@@ -1051,6 +1057,35 @@
                     <div class="ai-content collapsible-content" data-collapsed="false">{{ resume_feedback|safe }}</div>
                 </div>
                 {% endif %}
+
+                {% if resume_text %}
+                <div class="answer-block">
+                    <span class="answer-label">✏️ Refine Your Resume</span>
+                    <p class="field-note" style="margin: 0 0 0.6rem;">Edit the text below if you like, then let the AI apply the suggestions above. It won't invent facts — only rewrites what's already here.</p>
+                    <form method="POST" action="{% url 'refine_resume' %}" class="js-async-form">
+                        {% csrf_token %}
+                        <textarea name="resume_text" class="resume-textarea" rows="10">{{ resume_text }}</textarea>
+                        <input type="hidden" name="feedback_text" value="{{ resume_feedback_raw }}">
+                        <div class="field-row" style="margin-top: 0.75rem;">
+                            <button type="submit"><span class="btn-label">✨ Refine with AI</span><span class="btn-spinner"></span></button>
+                        </div>
+                    </form>
+                </div>
+                {% endif %}
+
+                {% if refined_resume %}
+                <div class="answer-block">
+                    <span class="answer-label">✅ Refined Resume</span>
+                    <p class="field-note" style="margin: 0 0 0.6rem;">Feel free to keep editing, then download when it looks right.</p>
+                    <form method="POST" action="{% url 'download_refined_resume_pdf' %}">
+                        {% csrf_token %}
+                        <textarea name="refined_resume" class="resume-textarea" rows="14">{{ refined_resume }}</textarea>
+                        <div class="field-row" style="margin-top: 0.75rem;">
+                            <button type="submit" class="secondary">⬇ Download as PDF</button>
+                        </div>
+                    </form>
+                </div>
+                {% endif %}
             </div>
         </section>
 
@@ -1316,15 +1351,17 @@
         // ---------- Scroll to the section that just got a new result ----------
         // Full-page POST/reload would otherwise dump the user back at the
         // top of the page after every action.
-        {% if active_waypoint %}
         (function () {
-            var target = document.getElementById("{{ active_waypoint }}");
-            if (target) {
-                var rect = target.getBoundingClientRect();
-                window.scrollTo({ top: window.scrollY + rect.top - 90, left: 0, behavior: "auto" });
-            }
+            {% if active_waypoint %}
+            (function() {
+                var target = document.getElementById("{{ active_waypoint }}");
+                if (target) {
+                    var rect = target.getBoundingClientRect();
+                    window.scrollTo({ top: window.scrollY + rect.top - 90, left: 0, behavior: "auto" });
+                }
+            })();
+            {% endif %}
         })();
-        {% endif %}
     </script>
 
 </body>
