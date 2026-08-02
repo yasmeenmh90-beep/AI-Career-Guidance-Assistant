@@ -16,5 +16,7 @@ services:
         value: "False"
       - key: ALLOWED_HOSTS
         value: "*"
+      - key: CSRF_TRUSTED_ORIGINS
+        value: "https://ai-career-guidance-assistant.onrender.com"
       - key: PYTHON_VERSION
         value: "3.11.9"

@@ -17,6 +17,10 @@
 </script>
 
 <style>
+
+    @view-transition {
+    navigation: auto;
+}
     :root {
         --bg: #F6F3EA;
         --surface: #FFFFFF;
@@ -54,6 +58,13 @@
     html { scroll-behavior: smooth; }
 
     body { transition: background 200ms ease, color 200ms ease; }
+    body {
+    animation: page-fade-in 200ms ease;
+}
+@keyframes page-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
 
     * { box-sizing: border-box; }
 

@@ -17,6 +17,11 @@
 </script>
 
 <style>
+
+    @view-transition {
+    navigation: auto;
+}
+
     :root {
         --bg: #F6F3EA; --surface: #FFFFFF; --ink: #1E2B22; --ink-soft: #4A594E;
         --pine: #2F4B3C; --blaze: #E2632A; --blaze-dark: #C24F1D;
@@ -35,6 +40,13 @@
         margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center;
         background: var(--bg); color: var(--ink); font-family: var(--font-body);
     }
+    body {
+    animation: page-fade-in 200ms ease;
+}
+@keyframes page-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
     .auth-card {
         width: 100%; max-width: 380px; background: var(--surface);
         border: 1px solid var(--line); border-radius: 14px; padding: 2.25rem;

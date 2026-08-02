@@ -16,6 +16,10 @@
     })();
 </script>
 <style>
+
+    @view-transition {
+    navigation: auto;
+}
     :root {
         --bg: #F6F3EA; --surface: #FFFFFF; --ink: #1E2B22; --ink-soft: #4A594E;
         --pine: #2F4B3C; --pine-light: #5A7A68; --blaze: #E2632A; --blaze-dark: #C24F1D;
@@ -29,6 +33,13 @@
         --moss: #6B8577; --line: #33443B; --focus: #6FA8FF;
     }
     body { transition: background 200ms ease, color 200ms ease; }
+    body {
+    animation: page-fade-in 200ms ease;
+}
+@keyframes page-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
     * { box-sizing: border-box; }
     body {
         margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-body);
@@ -377,6 +388,19 @@
             updateIcon();
         })();
     </script>
+
+    <script>
+  window.addEventListener('load', function () {
+    document.querySelectorAll('.donut-segment').forEach(function (el) {
+      var target = el.style.strokeDashoffset;
+      el.style.strokeDashoffset = el.getBoundingClientRect().width; // start empty
+      requestAnimationFrame(function () {
+        setTimeout(function () { el.style.strokeDashoffset = target; }, 50);
+      });
+    });
+  });
+</script>
+
 
 </body>
 </html>
