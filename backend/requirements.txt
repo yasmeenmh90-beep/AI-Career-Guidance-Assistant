@@ -70,3 +70,5 @@ wcwidth==0.8.2
 webencodings==0.5.1
 yarg==0.1.9
 markdown==3.10.2
+djangorestframework==3.17.1
+django-cors-headers==4.9.0
