@@ -160,6 +160,7 @@ def render_home(request, fresh_load=False, **extra_context):
             "skill_gap_error": None,
             "interview_error": None,
             "active_waypoint": None,
+            "saved_resume_filename": None,
         }
     else:
         context = {
@@ -179,6 +180,7 @@ def render_home(request, fresh_load=False, **extra_context):
             "skill_gap_error": None,
             "interview_error": None,
             "active_waypoint": None,
+            "saved_resume_filename": session.get("saved_resume_filename"),
         }
     context.update(extra_context)
 
@@ -375,6 +377,9 @@ def analyze_resume(request):
 
     resume_feedback = to_html(raw_feedback)
 
+    request.session["saved_resume_text"] = resume_text
+    request.session["saved_resume_filename"] = uploaded_file.name
+
     ResumeReport.objects.create(
         user=request.user,
         filename=uploaded_file.name,
@@ -391,17 +396,22 @@ def analyze_skill_gap(request):
     uploaded_file = request.FILES.get("skill_gap_resume")
     target_role = request.POST.get("skill_gap_role")
 
-    if not uploaded_file:
-        return render_home(request, skill_gap_error="Choose a PDF or DOCX file before checking your skill gap.", active_waypoint="waypoint-03")
+    if uploaded_file:
+        resume_text = extract_text_from_file(uploaded_file)
+        if resume_text is None:
+            return render_home(request, skill_gap_error="Couldn't read that file — make sure it's a valid PDF or DOCX.", active_waypoint="waypoint-03")
+        if not resume_text.strip():
+            return render_home(request, skill_gap_error="That file looks empty — try a different resume.", active_waypoint="waypoint-03")
+        
+        request.session["saved_resume_text"] = resume_text
+        request.session["saved_resume_filename"] = uploaded_file.name
+    else:
+        resume_text = request.session.get("saved_resume_text")
+        if not resume_text:
+            return render_home(request, skill_gap_error="Choose a PDF or DOCX file before checking your skill gap.", active_waypoint="waypoint-03")
+
     if not target_role or target_role not in ROADMAPS:
         return render_home(request, skill_gap_error="Pick a valid target role first.", active_waypoint="waypoint-03")
-
-    resume_text = extract_text_from_file(uploaded_file)
-
-    if resume_text is None:
-        return render_home(request, skill_gap_error="Couldn't read that file — make sure it's a valid PDF or DOCX.", active_waypoint="waypoint-03")
-    if not resume_text.strip():
-        return render_home(request, skill_gap_error="That file looks empty — try a different resume.", active_waypoint="waypoint-03")
 
     roadmap_steps = "\n".join(f"- {step}" for step in ROADMAPS[target_role]["steps"])
 
