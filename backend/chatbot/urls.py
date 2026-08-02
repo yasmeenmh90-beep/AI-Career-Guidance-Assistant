@@ -14,8 +14,9 @@ from .views import (
     to_html,
     SkillGapResponse,
 )
-from .models import ChatQuestion, ResumeReport, CareerPath, RoadmapStep, Course, InterviewReport
+from .models import ChatQuestion, ResumeReport, CareerPath, RoadmapStep, Course, InterviewReport, SkillGapReport
 from django.conf import settings
+from .auth_api import auth_status, api_login, api_logout, api_signup
 INTERVIEW_LENGTH = 5
 
 
@@ -391,6 +392,11 @@ async def api_history(request):
     })
 
 urlpatterns = [
+    path("auth/status/", auth_status, name="api-auth-status"),
+    path("auth/login/", api_login, name="api-auth-login"),
+    path("auth/logout/", api_logout, name="api-auth-logout"),
+    path("auth/signup/", api_signup, name="api-auth-signup"),
+
     path("careers/", CareerListView.as_view(), name="api-career-list"),
     path("chat/", ChatAPIView.as_view(), name="api-chat"),
     path("resume/", ResumeAPIView.as_view(), name="api-resume"),
