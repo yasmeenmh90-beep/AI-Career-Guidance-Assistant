@@ -109,6 +109,10 @@
     a { color: var(--pine); }
 
     ::selection { background: var(--blaze); color: #fff; }
+    ::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--line); border-radius: 999px; border: 2px solid var(--bg); }
+::-webkit-scrollbar-thumb:hover { background: var(--moss); }
 
     .topbar {
         max-width: 760px;
@@ -121,6 +125,13 @@
         font-size: 0.8rem;
         color: var(--ink-soft);
     }
+
+    .topbar.is-scrolled {
+    position: sticky; top: 0; z-index: 90;
+    background: color-mix(in srgb, var(--surface) 90%, transparent);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line);
+}
 
     .topbar a {
         color: var(--pine);
@@ -309,7 +320,7 @@
     .quick-nav a.is-done .quick-nav-num { background: var(--pine); color: #fff; }
 
 .quick-nav.is-pinned {
-    position: fixed; top: 0.75rem; left: 50%; transform: translateX(-50%);
+    position: fixed; top: 4.5rem; left: 50%; transform: translateX(-50%);
     background: color-mix(in srgb, var(--surface) 92%, transparent);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
@@ -351,6 +362,10 @@
     .waypoint:nth-child(2) { animation-delay: 80ms; }
     .waypoint:nth-child(3) { animation-delay: 160ms; }
     .waypoint:nth-child(4) { animation-delay: 240ms; }
+
+
+    .progress-ring-fill.is-complete { stroke: var(--pine); }
+.progress-ring-wrap.is-complete .progress-ring-percent::after { content: " 🎉"; }
 
     .marker {
         position: absolute;
@@ -1007,11 +1022,11 @@ input[type="text"], textarea, select {
         <h1>Find your way into the career you want</h1>
         <p>Ask questions, get a roadmap, check your resume, close your skill gaps, and practice interviews — one trail, every waypoint you need.</p>
 
-        <div class="progress-ring-wrap">
+        <div class="progress-ring-wrap{% if waypoints_done == 4 %} is-complete{% endif %}">
             <svg class="progress-ring" viewBox="0 0 100 100">
                 <circle class="progress-ring-bg" cx="50" cy="50" r="45"></circle>
-                <circle class="progress-ring-fill" cx="50" cy="50" r="45"
-                    style="stroke-dasharray: {{ trail_circumference }}; stroke-dashoffset: {{ trail_dash_offset }};"></circle>
+                <circle class="progress-ring-fill{% if waypoints_done == 4 %} is-complete{% endif %}" cx="50" cy="50" r="45"
+    style="stroke-dasharray: {{ trail_circumference|default:'283' }}; stroke-dashoffset: {{ trail_dash_offset|default:'283' }};"></circle>
             </svg>
             <div class="progress-ring-text">
                 <span class="progress-ring-percent">{{ trail_progress_percent }}%</span>
@@ -1286,6 +1301,14 @@ input[type="text"], textarea, select {
         </section>
 
     </main>
+
+
+    <script>
+        // ---------- Frosted topbar on scroll ----------
+        window.addEventListener('scroll', function () {
+            document.querySelector('.topbar').classList.toggle('is-scrolled', window.scrollY > 20);
+        });
+    </script>
 
 
     <script>
