@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import Chat from './pages/Chat';
 import Resume from './pages/Resume';
 import SkillGap from './pages/SkillGap';
+import History from './pages/History';
 import Interview from './pages/Interview';
 
 function Navigation() {
@@ -16,6 +17,7 @@ function Navigation() {
         Trailmark
       </Link>
       <div className="nav-links">
+        <Link to="/history" className="nav-link" style={{ marginRight: '1rem', fontWeight: 'bold' }}>Dashboard</Link>
         <Link to="/chat" className="nav-link">Advisor</Link>
         <Link to="/resume" className="nav-link">Resume</Link>
         <Link to="/skill-gap" className="nav-link">Skill Gap</Link>
@@ -33,6 +35,7 @@ function App() {
         <main className="main-content">
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/history" element={<History />} />
             <Route path="/chat" element={<Chat />} />
             <Route path="/resume" element={<Resume />} />
             <Route path="/skill-gap" element={<SkillGap />} />

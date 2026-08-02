@@ -305,6 +305,91 @@ class InterviewAnswerAPIView(APIView):
                 "is_final": False
             })
 
+
+from django.http import JsonResponse
+
+async def api_history(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({"error": "Not authenticated"}, status=401)
+        
+    chat_count = await sync_to_async(ChatQuestion.objects.filter(user=request.user).count)()
+    resume_count = await sync_to_async(ResumeReport.objects.filter(user=request.user).count)()
+    skill_gap_count = await sync_to_async(SkillGapReport.objects.filter(user=request.user).count)()
+    interview_count = await sync_to_async(InterviewReport.objects.filter(user=request.user).count)()
+    
+    total_activity = chat_count + resume_count + skill_gap_count + interview_count
+    
+    import math
+    donut_radius = 46
+    donut_circumference = round(2 * math.pi * donut_radius, 2)
+    
+    raw_bars = [
+        {"label": "Questions", "count": chat_count, "color": "var(--blaze)"},
+        {"label": "Resumes", "count": resume_count, "color": "var(--focus)"},
+        {"label": "Skill Gaps", "count": skill_gap_count, "color": "var(--pine)"},
+        {"label": "Interviews", "count": interview_count, "color": "var(--moss)"},
+    ]
+    
+    donut_segments = []
+    cumulative_length = 0.0
+    for bar in raw_bars:
+        fraction = (bar["count"] / total_activity) if total_activity else 0
+        length = round(fraction * donut_circumference, 2)
+        donut_segments.append({
+            "label": bar["label"],
+            "count": bar["count"],
+            "color": bar["color"],
+            "percent": round(fraction * 100),
+            "dasharray": f"{length} {round(donut_circumference - length, 2)}",
+            "dashoffset": round(-cumulative_length, 2),
+        })
+        cumulative_length += length
+        
+    # Skill-gap trends
+    skill_counts = {}
+    skill_gaps = await sync_to_async(list)(SkillGapReport.objects.filter(user=request.user))
+    for report in skill_gaps:
+        for skill in report.missing_skills.split(","):
+            skill = skill.strip()
+            if not skill:
+                continue
+            skill_counts[skill] = skill_counts.get(skill, 0) + 1
+            
+    top_skills = sorted(skill_counts.items(), key=lambda pair: pair[1], reverse=True)[:6]
+    max_skill_count = max([count for _, count in top_skills], default=1)
+    skill_trend_rows = [
+        {
+            "rank": i + 1,
+            "label": skill,
+            "count": count,
+            "dots": list(range(min(count, 5))),
+            "empty_dots": list(range(max(0, 5 - count))) if count < 5 else [],
+            "percent": int(count / max_skill_count * 100),
+        }
+        for i, (skill, count) in enumerate(top_skills)
+    ]
+    
+    chat_qs = await sync_to_async(list)(ChatQuestion.objects.filter(user=request.user).order_by('-created_at'))
+    chat_questions = [{"question": q.question, "matched_career": q.matched_career, "created_at": q.created_at.strftime("%d %b %Y, %H:%M")} for q in chat_qs]
+    
+    resume_qs = await sync_to_async(list)(ResumeReport.objects.filter(user=request.user).order_by('-created_at'))
+    resume_reports = [{"id": r.id, "filename": r.filename, "created_at": r.created_at.strftime("%d %b %Y, %H:%M")} for r in resume_qs]
+    
+    skill_gap_reports = [{"id": s.id, "target_role": s.target_role, "created_at": s.created_at.strftime("%d %b %Y, %H:%M")} for s in skill_gaps]
+    
+    interview_qs = await sync_to_async(list)(InterviewReport.objects.filter(user=request.user).order_by('-created_at'))
+    interview_reports = [{"id": i.id, "role": i.role, "created_at": i.created_at.strftime("%d %b %Y, %H:%M")} for i in interview_qs]
+    
+    return JsonResponse({
+        "total_activity": total_activity,
+        "donut_segments": donut_segments,
+        "skill_trend_rows": skill_trend_rows,
+        "chat_questions": chat_questions,
+        "resume_reports": resume_reports,
+        "skill_gap_reports": skill_gap_reports,
+        "interview_reports": interview_reports
+    })
+
 urlpatterns = [
     path("careers/", CareerListView.as_view(), name="api-career-list"),
     path("chat/", ChatAPIView.as_view(), name="api-chat"),
@@ -312,4 +397,5 @@ urlpatterns = [
     path("skill-gap/", SkillGapAPIView.as_view(), name="api-skill-gap"),
     path("interview/start/", InterviewStartAPIView.as_view(), name="api-interview-start"),
     path("interview/answer/", InterviewAnswerAPIView.as_view(), name="api-interview-answer"),
+    path("history/", api_history, name="api-history"),
 ]
