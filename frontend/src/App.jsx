@@ -37,7 +37,7 @@ function Navigation({ user, onLogout }) {
 
   return (
     <nav className="topbar">
-      <Link to="/" style={{ color: 'var(--ink)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, fontFamily: 'var(--font-display)', fontSize: '1.2rem' }}>
+      <Link to="/" style={{ color: 'var(--ink)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, fontFamily: 'var(--font-display)', fontSize: '1.2rem', whiteSpace: 'nowrap' }}>
         <Compass size={24} style={{ color: 'var(--blaze)' }} />
         Trailmark
       </Link>
