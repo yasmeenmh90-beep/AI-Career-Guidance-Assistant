@@ -24,23 +24,20 @@ load_dotenv(BASE_DIR / ".env", override=True)
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-k-8jk-h6p)crk(#1!b_ly-_2-28=1s+nwxu!7!j$vxb2k-a)p9"
+SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-k-8jk-h6p)crk(#1!b_ly-_2-28=1s+nwxu!7!j$vxb2k-a)p9")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = os.getenv("DEBUG", "False").lower() in ("true", "1", "t")
 
-ALLOWED_HOSTS = [
-    'yasmeenmh.pythonanywhere.com',
-    'your-render-app.onrender.com',
-    '127.0.0.1',
-    'localhost',
-]
+ALLOWED_HOSTS = os.getenv(
+    "ALLOWED_HOSTS",
+    "yasmeenmh.pythonanywhere.com,127.0.0.1,localhost"
+).split(",")
 
-CSRF_TRUSTED_ORIGINS = [
-    'https://yasmeenmh.pythonanywhere.com',
-    'https://your-render-app.onrender.com',
-]
-
+CSRF_TRUSTED_ORIGINS = os.getenv(
+    "CSRF_TRUSTED_ORIGINS",
+    "https://yasmeenmh.pythonanywhere.com"
+).split(",")
 
 # Application definition
 
@@ -55,7 +52,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-"django.middleware.security.SecurityMiddleware",
+    "django.middleware.security.SecurityMiddleware",
 "whitenoise.middleware.WhiteNoiseMiddleware",
 "django.contrib.sessions.middleware.SessionMiddleware",
 "django.middleware.common.CommonMiddleware",
