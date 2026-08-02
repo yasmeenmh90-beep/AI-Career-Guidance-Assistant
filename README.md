@@ -201,9 +201,14 @@ To add a new role, add matching entries to `resources/roadmaps.json` and `resour
 
 Built for **NextGen Innovation 2026** — Innovate • Collaborate • Transform
 
+## Live Demo
+
+- **PythonAnywhere:** https://yasmeenmh.pythonanywhere.com
+- **Render:** https://ai-career-guidance-assistant.onrender.com
+
 ## What's Next
 
-- Deploying to a live, always-on environment (PythonAnywhere) so anyone can try it without running it locally
+
 - Tracking multiple resume versions over time, with a skill-gap-closing comparison across versions
 - A DOCX export option for the refined resume (currently PDF-only)
 - Richer analytics: trends over time, not just cumulative totals
