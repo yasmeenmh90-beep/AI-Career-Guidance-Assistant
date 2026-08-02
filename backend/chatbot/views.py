@@ -363,6 +363,9 @@ def analyze_resume(request):
     if not resume_text.strip():
         return render_home(request, resume_error="That file looks empty — try a different resume.", active_waypoint="waypoint-02")
 
+    request.session["saved_resume_text"] = resume_text
+    request.session["saved_resume_filename"] = uploaded_file.name
+
     raw_feedback = get_ai_response(
         "You are a professional resume reviewer. Analyze the given resume "
         "text and provide clear, structured feedback using markdown "
@@ -376,9 +379,6 @@ def analyze_resume(request):
         return render_home(request, resume_error="Couldn't reach the AI just now — please try again in a moment.", active_waypoint="waypoint-02")
 
     resume_feedback = to_html(raw_feedback)
-
-    request.session["saved_resume_text"] = resume_text
-    request.session["saved_resume_filename"] = uploaded_file.name
 
     ResumeReport.objects.create(
         user=request.user,
