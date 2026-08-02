@@ -41,65 +41,65 @@ export default function Login({ onLogin }) {
   };
 
   return (
-    <div className="animate-fade-in flex items-center justify-center pt-12 pb-24">
-      <div className="surface-panel w-full max-w-md">
-        <h2 className="mb-2 text-2xl">{isLogin ? 'Welcome Back' : 'Create Account'}</h2>
+    <div className="login-container">
+      <div className="surface-panel login-box">
+        <h2>{isLogin ? 'Welcome Back' : 'Create Account'}</h2>
         <p className="text-secondary mb-6">
           {isLogin ? 'Sign in to view your career dashboard.' : 'Start your journey with Trailmark.'}
         </p>
 
-        {error && <div className="error-message mb-4">{error}</div>}
+        {error && <div style={{ color: 'var(--alert)', marginBottom: '1rem', fontSize: '0.9rem', fontWeight: '500' }}>{error}</div>}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-bold uppercase tracking-wider mb-2">Username</label>
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label className="eyebrow" style={{ display: 'block', marginBottom: '0.5rem' }}>Username</label>
             <input 
               type="text" 
               required 
-              className="chat-input" 
+              className="input-field" 
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="Username"
+              placeholder="Enter your username"
             />
           </div>
 
           {!isLogin && (
-            <div>
-              <label className="block text-sm font-bold uppercase tracking-wider mb-2">Email</label>
+            <div className="form-group">
+              <label className="eyebrow" style={{ display: 'block', marginBottom: '0.5rem' }}>Email</label>
               <input 
                 type="email" 
                 required 
-                className="chat-input" 
+                className="input-field" 
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Email address"
+                placeholder="Enter your email"
               />
             </div>
           )}
 
-          <div>
-            <label className="block text-sm font-bold uppercase tracking-wider mb-2">Password</label>
+          <div className="form-group">
+            <label className="eyebrow" style={{ display: 'block', marginBottom: '0.5rem' }}>Password</label>
             <input 
               type="password" 
               required 
-              className="chat-input" 
+              className="input-field" 
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Password"
+              placeholder="Enter your password"
             />
           </div>
 
-          <button type="submit" disabled={loading} className="btn-primary w-full mt-6 justify-center">
+          <button type="submit" disabled={loading} className="btn-primary w-full text-center mt-6" style={{ justifyContent: 'center' }}>
             {loading ? <Loader2 className="spin" size={20} /> : (isLogin ? 'Sign In' : 'Sign Up')}
           </button>
         </form>
 
-        <div className="mt-6 text-center text-sm">
+        <div className="mt-6 text-center" style={{ fontSize: '0.9rem' }}>
           <span className="text-secondary">{isLogin ? "Don't have an account?" : "Already have an account?"}</span>
           {' '}
           <button 
             type="button"
-            className="text-blaze font-bold hover:underline bg-transparent border-none cursor-pointer"
+            style={{ background: 'transparent', border: 'none', color: 'var(--blaze)', fontWeight: 'bold', cursor: 'pointer', fontSize: '0.9rem' }}
             onClick={() => setIsLogin(!isLogin)}
           >
             {isLogin ? 'Sign Up' : 'Sign In'}

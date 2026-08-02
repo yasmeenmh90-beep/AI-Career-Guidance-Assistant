@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link, useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { Compass, MessageSquare, FileText, Target, Mic, LogOut, User } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import Home from './pages/Home';
@@ -23,6 +23,18 @@ function Navigation({ user, onLogout }) {
     }
   };
 
+  // Don't show nav items on login page if not logged in
+  if (!user && location.pathname === '/login') {
+    return (
+      <nav className="topbar" style={{ justifyContent: 'center' }}>
+        <div style={{ color: 'var(--ink)', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, fontFamily: 'var(--font-display)', fontSize: '1.5rem' }}>
+          <Compass size={28} style={{ color: 'var(--blaze)' }} />
+          Trailmark
+        </div>
+      </nav>
+    );
+  }
+
   return (
     <nav className="topbar">
       <Link to="/" style={{ color: 'var(--ink)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, fontFamily: 'var(--font-display)', fontSize: '1.2rem' }}>
@@ -30,22 +42,22 @@ function Navigation({ user, onLogout }) {
         Trailmark
       </Link>
       <div className="nav-links">
-        {user ? (
+        {user && (
           <>
             <Link to="/history" className="nav-link" style={{ marginRight: '1rem', fontWeight: 'bold' }}>Dashboard</Link>
             <Link to="/chat" className="nav-link">Advisor</Link>
             <Link to="/resume" className="nav-link">Resume</Link>
             <Link to="/skill-gap" className="nav-link">Skill Gap</Link>
             <Link to="/interview" className="nav-link">Mock Interview</Link>
-            <div className="flex items-center gap-4 ml-4 pl-4 border-l border-ink border-opacity-20">
-              <span className="text-sm font-bold flex items-center gap-1"><User size={14}/> {user}</span>
-              <button onClick={handleLogout} className="btn-secondary py-1 px-3 text-xs flex items-center gap-1">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginLeft: '1rem', paddingLeft: '1rem', borderLeft: '1px solid var(--line)' }}>
+              <span style={{ fontSize: '0.85rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                <User size={14}/> {user}
+              </span>
+              <button onClick={handleLogout} className="btn-secondary" style={{ padding: '0.25rem 0.75rem', fontSize: '0.75rem' }}>
                 <LogOut size={14}/> Logout
               </button>
             </div>
           </>
-        ) : (
-          <Link to="/login" className="btn-primary py-1 px-4 text-sm">Sign In</Link>
         )}
       </div>
     </nav>
@@ -77,13 +89,13 @@ function App() {
         <Navigation user={user} onLogout={() => setUser(null)} />
         <main className="main-content">
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login onLogin={(u) => setUser(u)} />} />
-            <Route path="/history" element={<History />} />
-            <Route path="/chat" element={<Chat />} />
-            <Route path="/resume" element={<Resume />} />
-            <Route path="/skill-gap" element={<SkillGap />} />
-            <Route path="/interview" element={<Interview />} />
+            <Route path="/login" element={user ? <Navigate to="/history" /> : <Login onLogin={(u) => setUser(u)} />} />
+            <Route path="/" element={user ? <Home /> : <Navigate to="/login" />} />
+            <Route path="/history" element={user ? <History /> : <Navigate to="/login" />} />
+            <Route path="/chat" element={user ? <Chat /> : <Navigate to="/login" />} />
+            <Route path="/resume" element={user ? <Resume /> : <Navigate to="/login" />} />
+            <Route path="/skill-gap" element={user ? <SkillGap /> : <Navigate to="/login" />} />
+            <Route path="/interview" element={user ? <Interview /> : <Navigate to="/login" />} />
           </Routes>
         </main>
       </div>

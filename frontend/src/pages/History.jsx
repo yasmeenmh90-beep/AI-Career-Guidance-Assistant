@@ -35,22 +35,20 @@ export default function History() {
   }
 
   return (
-    <div className="animate-fade-in max-w-3xl mx-auto pb-12">
-      <div className="mb-8">
-        <h1>Your trail so far</h1>
-        <p className="text-secondary">Dashboard and activity history</p>
-      </div>
+    <div className="animate-fade-in">
+      <h1 className="mb-2">Your trail so far</h1>
+      <p className="text-secondary mb-6">Dashboard and activity history</p>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-        {/* Overview Chart */}
-        <div className="surface-panel h-full flex flex-col">
-          <span className="text-secondary text-sm font-bold uppercase tracking-wider mb-2">Overview</span>
-          <h2 className="mb-6 text-xl">📊 Activity Breakdown</h2>
+      <div className="dashboard-grid">
+        {/* Overview Card */}
+        <div className="surface-panel dashboard-card">
+          <div className="card-header">Overview</div>
+          <h2 className="card-title">Activity Breakdown</h2>
           
           {data.total_activity > 0 ? (
-            <div className="flex items-center gap-6 mt-auto mb-auto">
-              <div className="relative w-32 h-32 flex-shrink-0">
-                <svg viewBox="0 0 116 116" className="w-full h-full -rotate-90">
+            <div className="donut-container">
+              <div className="donut-chart">
+                <svg viewBox="0 0 116 116" style={{ width: '100%', height: '100%', transform: 'rotate(-90deg)' }}>
                   <circle cx="58" cy="58" r="46" fill="none" stroke="var(--ink)" strokeWidth="12" strokeOpacity="0.05" />
                   {data.donut_segments.map((seg, i) => (
                     seg.count > 0 && (
@@ -72,124 +70,126 @@ export default function History() {
                     )
                   ))}
                 </svg>
-                <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <span className="text-3xl font-bold font-display">{data.total_activity}</span>
-                  <span className="text-xs text-secondary font-bold uppercase">Total</span>
+                <div className="donut-center">
+                  <span style={{ fontSize: '1.875rem', fontWeight: 'bold', fontFamily: 'var(--font-display)' }}>{data.total_activity}</span>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--ink-soft)', fontWeight: 'bold', textTransform: 'uppercase' }}>Total</span>
                 </div>
               </div>
               
-              <div className="flex flex-col gap-3 flex-1">
+              <div className="donut-legend">
                 {data.donut_segments.map((seg, i) => (
-                  <div key={i} className="flex items-center gap-2 text-sm">
-                    <span className="w-3 h-3 rounded-full flex-shrink-0" style={{ background: seg.color }}></span>
-                    <span className="font-medium flex-1">{seg.label}</span>
-                    <span className="font-bold">{seg.count}</span>
-                    <span className="text-secondary text-xs w-8 text-right">{seg.percent}%</span>
+                  <div key={i} className="legend-item">
+                    <span className="legend-color" style={{ background: seg.color }}></span>
+                    <span style={{ fontWeight: '500', flex: 1 }}>{seg.label}</span>
+                    <span style={{ fontWeight: 'bold' }}>{seg.count}</span>
+                    <span style={{ color: 'var(--ink-soft)', fontSize: '0.75rem', width: '2rem', textAlign: 'right' }}>{seg.percent}%</span>
                   </div>
                 ))}
               </div>
             </div>
           ) : (
-            <p className="text-secondary italic mt-auto mb-auto">Ask a question, check a resume, or start an interview to see your activity here.</p>
+            <p className="text-secondary" style={{ fontStyle: 'italic', marginTop: 'auto', marginBottom: 'auto' }}>Ask a question, check a resume, or start an interview to see your activity here.</p>
           )}
         </div>
 
-        {/* Skill Trend */}
-        <div className="surface-panel h-full flex flex-col">
-          <span className="text-secondary text-sm font-bold uppercase tracking-wider mb-2">Trend</span>
-          <h2 className="mb-6 text-xl">🧭 Skill Gap Trends</h2>
+        {/* Skill Trend Card */}
+        <div className="surface-panel dashboard-card">
+          <div className="card-header">Trend</div>
+          <h2 className="card-title">Skill Gap Trends</h2>
           
           {data.skill_trend_rows && data.skill_trend_rows.length > 0 ? (
-            <div className="flex flex-col gap-4 mt-auto mb-auto">
+            <div className="trend-list">
               {data.skill_trend_rows.map((row, i) => (
-                <div key={i} className="flex items-center gap-3 text-sm">
-                  <span className="w-5 h-5 flex items-center justify-center rounded bg-ink text-white font-bold text-xs flex-shrink-0" style={{ background: i === 0 ? 'var(--blaze)' : 'var(--pine)' }}>
+                <div key={i} className="trend-item">
+                  <span className="trend-rank" style={{ background: i === 0 ? 'var(--blaze)' : 'var(--pine)' }}>
                     {row.rank}
                   </span>
-                  <span className="font-medium flex-1 truncate">{row.label}</span>
-                  <div className="flex gap-1">
-                    {row.dots.map(d => <span key={`d-${d}`} className="w-2 h-2 rounded-full" style={{ background: i === 0 ? 'var(--blaze)' : 'var(--pine)' }}></span>)}
-                    {row.empty_dots.map(d => <span key={`e-${d}`} className="w-2 h-2 rounded-full opacity-20" style={{ background: i === 0 ? 'var(--blaze)' : 'var(--pine)' }}></span>)}
+                  <span style={{ fontWeight: '500', flex: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{row.label}</span>
+                  <div style={{ display: 'flex', gap: '0.25rem' }}>
+                    {row.dots.map(d => <span key={`d-${d}`} style={{ width: '0.5rem', height: '0.5rem', borderRadius: '50%', background: i === 0 ? 'var(--blaze)' : 'var(--pine)' }}></span>)}
+                    {row.empty_dots.map(d => <span key={`e-${d}`} style={{ width: '0.5rem', height: '0.5rem', borderRadius: '50%', background: i === 0 ? 'var(--blaze)' : 'var(--pine)', opacity: 0.2 }}></span>)}
                   </div>
-                  <span className="font-bold text-secondary text-xs w-6 text-right">×{row.count}</span>
+                  <span style={{ fontWeight: 'bold', color: 'var(--ink-soft)', fontSize: '0.75rem', width: '1.5rem', textAlign: 'right' }}>×{row.count}</span>
                 </div>
               ))}
             </div>
           ) : (
-            <p className="text-secondary italic mt-auto mb-auto">Run a skill-gap analysis to start seeing which skills come up most often.</p>
+            <p className="text-secondary" style={{ fontStyle: 'italic', marginTop: 'auto', marginBottom: 'auto' }}>Run a skill-gap analysis to start seeing which skills come up most often.</p>
           )}
         </div>
       </div>
 
-      <div className="space-y-8">
-        <div>
-          <h3 className="mb-4 flex items-center gap-2 border-b border-ink border-opacity-10 pb-2"><span className="text-blaze">💬</span> Questions Asked</h3>
-          <div className="space-y-3">
+      <div>
+        <div className="history-section">
+          <h3 className="history-header"><span style={{ color: 'var(--blaze)' }}>💬</span> Questions Asked</h3>
+          <div className="history-list">
             {data.chat_questions && data.chat_questions.length > 0 ? (
               data.chat_questions.map((q, i) => (
-                <div key={i} className="bg-ink bg-opacity-5 p-4 rounded-lg">
-                  <div className="text-xs text-secondary mb-1 font-mono">{q.created_at}{q.matched_career ? ` — ${q.matched_career}` : ''}</div>
-                  <div className="font-medium">{q.question}</div>
+                <div key={i} className="history-item">
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--ink-soft)', marginBottom: '0.25rem', fontFamily: 'var(--font-mono)' }}>{q.created_at}{q.matched_career ? ` • ${q.matched_career}` : ''}</div>
+                    <div style={{ fontWeight: '500' }}>{q.question}</div>
+                  </div>
                 </div>
               ))
-            ) : <p className="text-secondary italic text-sm">No questions asked yet.</p>}
+            ) : <p className="text-secondary" style={{ fontStyle: 'italic', fontSize: '0.875rem' }}>No questions asked yet.</p>}
           </div>
         </div>
 
-        <div>
-          <h3 className="mb-4 flex items-center gap-2 border-b border-ink border-opacity-10 pb-2"><span className="text-focus">📋</span> Resume Checks</h3>
-          <div className="space-y-3">
+        <div className="history-section">
+          <h3 className="history-header"><span style={{ color: 'var(--focus)' }}>📄</span> Resume Checks</h3>
+          <div className="history-list">
             {data.resume_reports && data.resume_reports.length > 0 ? (
               data.resume_reports.map((r, i) => (
-                <div key={i} className="bg-ink bg-opacity-5 p-4 rounded-lg flex items-center justify-between gap-4">
-                  <div>
-                    <div className="text-xs text-secondary mb-1 font-mono">{r.created_at}</div>
-                    <div className="font-medium">{r.filename}</div>
+                <div key={i} className="history-item">
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--ink-soft)', marginBottom: '0.25rem', fontFamily: 'var(--font-mono)' }}>{r.created_at}</div>
+                    <div style={{ fontWeight: '500' }}>{r.filename}</div>
                   </div>
-                  <a href={`/history/resume/${r.id}/pdf/`} className="btn-secondary py-1 px-3 text-xs flex items-center gap-1">
+                  <a href={`/history/resume/${r.id}/pdf/`} className="btn-secondary" style={{ padding: '0.25rem 0.75rem', fontSize: '0.75rem' }}>
                     <Download size={14} /> PDF
                   </a>
                 </div>
               ))
-            ) : <p className="text-secondary italic text-sm">No resumes analyzed yet.</p>}
+            ) : <p className="text-secondary" style={{ fontStyle: 'italic', fontSize: '0.875rem' }}>No resumes analyzed yet.</p>}
           </div>
         </div>
 
-        <div>
-          <h3 className="mb-4 flex items-center gap-2 border-b border-ink border-opacity-10 pb-2"><span className="text-pine">🧭</span> Skill Gap Reports</h3>
-          <div className="space-y-3">
+        <div className="history-section">
+          <h3 className="history-header"><span style={{ color: 'var(--pine)' }}>🧭</span> Skill Gap Reports</h3>
+          <div className="history-list">
             {data.skill_gap_reports && data.skill_gap_reports.length > 0 ? (
               data.skill_gap_reports.map((s, i) => (
-                <div key={i} className="bg-ink bg-opacity-5 p-4 rounded-lg flex items-center justify-between gap-4">
-                  <div>
-                    <div className="text-xs text-secondary mb-1 font-mono">{s.created_at}</div>
-                    <div className="font-medium">{s.target_role}</div>
+                <div key={i} className="history-item">
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--ink-soft)', marginBottom: '0.25rem', fontFamily: 'var(--font-mono)' }}>{s.created_at}</div>
+                    <div style={{ fontWeight: '500' }}>{s.target_role}</div>
                   </div>
-                  <a href={`/history/skill-gap/${s.id}/pdf/`} className="btn-secondary py-1 px-3 text-xs flex items-center gap-1">
+                  <a href={`/history/skill-gap/${s.id}/pdf/`} className="btn-secondary" style={{ padding: '0.25rem 0.75rem', fontSize: '0.75rem' }}>
                     <Download size={14} /> PDF
                   </a>
                 </div>
               ))
-            ) : <p className="text-secondary italic text-sm">No skill gap reports yet.</p>}
+            ) : <p className="text-secondary" style={{ fontStyle: 'italic', fontSize: '0.875rem' }}>No skill gap reports yet.</p>}
           </div>
         </div>
 
-        <div>
-          <h3 className="mb-4 flex items-center gap-2 border-b border-ink border-opacity-10 pb-2"><span className="text-moss">🎤</span> Mock Interviews</h3>
-          <div className="space-y-3">
+        <div className="history-section">
+          <h3 className="history-header"><span style={{ color: 'var(--moss)' }}>🎤</span> Mock Interviews</h3>
+          <div className="history-list">
             {data.interview_reports && data.interview_reports.length > 0 ? (
               data.interview_reports.map((inv, i) => (
-                <div key={i} className="bg-ink bg-opacity-5 p-4 rounded-lg flex items-center justify-between gap-4">
-                  <div>
-                    <div className="text-xs text-secondary mb-1 font-mono">{inv.created_at}</div>
-                    <div className="font-medium">{inv.role}</div>
+                <div key={i} className="history-item">
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--ink-soft)', marginBottom: '0.25rem', fontFamily: 'var(--font-mono)' }}>{inv.created_at}</div>
+                    <div style={{ fontWeight: '500' }}>{inv.role}</div>
                   </div>
-                  <a href={`/history/interview/${inv.id}/pdf/`} className="btn-secondary py-1 px-3 text-xs flex items-center gap-1">
+                  <a href={`/history/interview/${inv.id}/pdf/`} className="btn-secondary" style={{ padding: '0.25rem 0.75rem', fontSize: '0.75rem' }}>
                     <Download size={14} /> PDF
                   </a>
                 </div>
               ))
-            ) : <p className="text-secondary italic text-sm">No mock interviews completed yet.</p>}
+            ) : <p className="text-secondary" style={{ fontStyle: 'italic', fontSize: '0.875rem' }}>No mock interviews completed yet.</p>}
           </div>
         </div>
       </div>

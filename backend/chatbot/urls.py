@@ -310,13 +310,15 @@ class InterviewAnswerAPIView(APIView):
 from django.http import JsonResponse
 
 async def api_history(request):
-    if not request.user.is_authenticated:
+    user = await request.auser()
+    is_auth = await sync_to_async(lambda: user.is_authenticated)()
+    if not is_auth:
         return JsonResponse({"error": "Not authenticated"}, status=401)
         
-    chat_count = await sync_to_async(ChatQuestion.objects.filter(user=request.user).count)()
-    resume_count = await sync_to_async(ResumeReport.objects.filter(user=request.user).count)()
-    skill_gap_count = await sync_to_async(SkillGapReport.objects.filter(user=request.user).count)()
-    interview_count = await sync_to_async(InterviewReport.objects.filter(user=request.user).count)()
+    chat_count = await sync_to_async(ChatQuestion.objects.filter(user=user).count)()
+    resume_count = await sync_to_async(ResumeReport.objects.filter(user=user).count)()
+    skill_gap_count = await sync_to_async(SkillGapReport.objects.filter(user=user).count)()
+    interview_count = await sync_to_async(InterviewReport.objects.filter(user=user).count)()
     
     total_activity = chat_count + resume_count + skill_gap_count + interview_count
     
@@ -348,7 +350,7 @@ async def api_history(request):
         
     # Skill-gap trends
     skill_counts = {}
-    skill_gaps = await sync_to_async(list)(SkillGapReport.objects.filter(user=request.user))
+    skill_gaps = await sync_to_async(list)(SkillGapReport.objects.filter(user=user))
     for report in skill_gaps:
         for skill in report.missing_skills.split(","):
             skill = skill.strip()
@@ -370,15 +372,15 @@ async def api_history(request):
         for i, (skill, count) in enumerate(top_skills)
     ]
     
-    chat_qs = await sync_to_async(list)(ChatQuestion.objects.filter(user=request.user).order_by('-created_at'))
+    chat_qs = await sync_to_async(list)(ChatQuestion.objects.filter(user=user).order_by('-created_at'))
     chat_questions = [{"question": q.question, "matched_career": q.matched_career, "created_at": q.created_at.strftime("%d %b %Y, %H:%M")} for q in chat_qs]
     
-    resume_qs = await sync_to_async(list)(ResumeReport.objects.filter(user=request.user).order_by('-created_at'))
+    resume_qs = await sync_to_async(list)(ResumeReport.objects.filter(user=user).order_by('-created_at'))
     resume_reports = [{"id": r.id, "filename": r.filename, "created_at": r.created_at.strftime("%d %b %Y, %H:%M")} for r in resume_qs]
     
     skill_gap_reports = [{"id": s.id, "target_role": s.target_role, "created_at": s.created_at.strftime("%d %b %Y, %H:%M")} for s in skill_gaps]
     
-    interview_qs = await sync_to_async(list)(InterviewReport.objects.filter(user=request.user).order_by('-created_at'))
+    interview_qs = await sync_to_async(list)(InterviewReport.objects.filter(user=user).order_by('-created_at'))
     interview_reports = [{"id": i.id, "role": i.role, "created_at": i.created_at.strftime("%d %b %Y, %H:%M")} for i in interview_qs]
     
     return JsonResponse({
