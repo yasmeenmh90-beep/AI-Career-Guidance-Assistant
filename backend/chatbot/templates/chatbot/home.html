@@ -1068,6 +1068,14 @@
                 {% endif %}
                 <form method="POST" action="{% url 'analyze_skill_gap' %}" enctype="multipart/form-data" class="js-async-form">
                     {% csrf_token %}
+                    {% if saved_resume_filename %}
+                    <div class="field-row" style="margin-bottom: 1.5rem; background: var(--surface); padding: 1rem; border-radius: 8px; border: 1px dashed var(--pine-light);">
+                        <p style="color: var(--pine); font-size: 0.95rem; font-weight: 500;">
+                            Using uploaded resume: <strong>{{ saved_resume_filename }}</strong>
+                        </p>
+                        <p class="field-note" style="margin-top: 0.3rem;">Want to use a different resume? Upload it in the "Check your resume" section above.</p>
+                    </div>
+                    {% else %}
                     <div class="dropzone" id="dropzone-skill-gap" tabindex="0" role="button" aria-label="Upload resume file">
                         <svg class="dropzone-check" viewBox="0 0 48 48" width="40" height="40"><circle cx="24" cy="24" r="20"/><path d="M15 24l7 7 11-12"/></svg>
                         <svg class="dropzone-icon" viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M8 8l4-4 4 4"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
@@ -1076,6 +1084,7 @@
                         <p class="dropzone-filename"></p>
                         <input type="file" name="skill_gap_resume" accept=".pdf,.docx" class="dropzone-input" id="file-input-skill-gap">
                     </div>
+                    {% endif %}
                     <div class="field-row" style="margin-top: 0.9rem;">
                         <select name="skill_gap_role">
                             {% for role in roles %}

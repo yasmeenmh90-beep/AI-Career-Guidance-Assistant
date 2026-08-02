@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from chatbot import views
 
@@ -25,6 +25,9 @@ urlpatterns = [
     path('skill-gap/', views.analyze_skill_gap, name='analyze_skill_gap'),
     path('interview/start/', views.start_interview, name='start_interview'),
     path('interview/answer/', views.submit_interview_answer, name='submit_interview_answer'),
+
+    # REST API
+    path('api/', include('chatbot.urls')),
 
     path('', views.home, name='home'),
 ]

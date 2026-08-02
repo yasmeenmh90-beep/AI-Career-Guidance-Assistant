@@ -4,7 +4,10 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login as auth_login
 from django.views.decorators.http import require_POST
 from django.http import HttpResponse
-from openai import OpenAI
+from django_ratelimit.decorators import ratelimit
+from asgiref.sync import sync_to_async
+from openai import AsyncOpenAI
+from pydantic import BaseModel
 from dotenv import load_dotenv
 import os
 import io
@@ -15,27 +18,18 @@ import markdown
 from bs4 import BeautifulSoup
 from docx import Document
 from reportlab.lib.pagesizes import LETTER
-from reportlab.lib.units import inch
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib import colors
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, ListFlowable, ListItem
+from django.template.loader import render_to_string
+from xhtml2pdf import pisa
 
-from .models import ChatQuestion, ResumeReport, SkillGapReport, InterviewReport
+from .models import ChatQuestion, ResumeReport, SkillGapReport, InterviewReport, CareerPath, RoadmapStep, Course
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 load_dotenv(os.path.join(BASE_DIR, ".env"))
 
-api_key = os.getenv("OPENAI_API_KEY", "").strip()
+client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY", "").strip())
 
-client = OpenAI(api_key=api_key)
 
-# Load roadmap and course data
-with open(os.path.join(BASE_DIR, "..", "resources", "roadmaps.json")) as f:
-    ROADMAPS = json.load(f)
-
-with open(os.path.join(BASE_DIR, "..", "resources", "courses.json")) as f:
-    COURSES = json.load(f)
 
 INTERVIEW_LENGTH = 5  # number of questions per mock interview
 
@@ -44,9 +38,10 @@ INTERVIEW_LENGTH = 5  # number of questions per mock interview
 # Helpers
 # =========================================================
 
-def find_matching_career(question):
+async def find_matching_career(question):
     question_lower = question.lower()
-    for career in ROADMAPS.keys():
+    careers = await sync_to_async(lambda: list(CareerPath.objects.values_list('name', flat=True)))()
+    for career in careers:
         if career.lower() in question_lower:
             return career
     return None
@@ -69,20 +64,32 @@ def extract_text_from_file(uploaded_file):
         return None
 
 
-def get_ai_response(system_prompt, user_content):
+async def get_ai_response(system_prompt, user_content, response_format=None):
     """Centralised helper for calling OpenAI so we don't repeat this everywhere.
     Returns None on any failure (rate limit, network error, bad key, etc.) so
     callers can show a friendly message instead of a 500 page."""
     try:
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_content}
-            ]
-        )
-        return response.choices[0].message.content
-    except Exception:
+        if response_format:
+            response = await client.beta.chat.completions.parse(
+                model="gpt-4o-mini",
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_content}
+                ],
+                response_format=response_format
+            )
+            return response.choices[0].message.parsed
+        else:
+            response = await client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_content}
+                ]
+            )
+            return response.choices[0].message.content
+    except Exception as e:
+        print(f"OpenAI API Error: {e}")
         return None
 
 
@@ -113,7 +120,7 @@ def trail_progress_context(session):
         "trail_progress_percent": int((waypoints_done / 4) * 100),
         "trail_circumference": round(circumference, 2),
         "trail_dash_offset": round(dash_offset, 2),
-        "roles": list(ROADMAPS.keys()),
+        "roles": list(CareerPath.objects.values_list('name', flat=True)),
     }
 
 
@@ -160,6 +167,7 @@ def render_home(request, fresh_load=False, **extra_context):
             "skill_gap_error": None,
             "interview_error": None,
             "active_waypoint": None,
+            "saved_resume_filename": None,
         }
     else:
         context = {
@@ -179,6 +187,7 @@ def render_home(request, fresh_load=False, **extra_context):
             "skill_gap_error": None,
             "interview_error": None,
             "active_waypoint": None,
+            "saved_resume_filename": session.get("saved_resume_filename"),
         }
     context.update(extra_context)
 
@@ -309,14 +318,17 @@ def home(request):
 
 @login_required
 @require_POST
-def ask_question(request):
+@ratelimit(key='user_or_ip', rate='10/m', block=False)
+async def ask_question(request):
     """POST /ask/ — chatbot question + roadmap + courses."""
+    if getattr(request, 'limited', False):
+        return await sync_to_async(render_home)(request, answer_error="You're asking questions too quickly. Please wait a moment.", active_waypoint="waypoint-01")
     question = request.POST.get("question", "").strip()
 
     if not question:
-        return render_home(request, answer_error="Type a question before hitting Ask.", active_waypoint="waypoint-01")
+        return await sync_to_async(render_home)(request, answer_error="Type a question before hitting Ask.", active_waypoint="waypoint-01")
 
-    raw_answer = get_ai_response(
+    raw_answer = await get_ai_response(
         "You are a helpful career and study guidance assistant for "
         "students. Give clear practical advice, formatted with "
         "markdown headings and bullet points where useful.",
@@ -324,44 +336,50 @@ def ask_question(request):
     )
 
     if raw_answer is None:
-        return render_home(request, answer_error="Couldn't reach the AI just now — please try again in a moment.", active_waypoint="waypoint-01")
+        return await sync_to_async(render_home)(request, answer_error="Couldn't reach the AI just now — please try again in a moment.", active_waypoint="waypoint-01")
 
     answer = to_html(raw_answer)
 
     roadmap = None
     courses = None
-    matched_career = find_matching_career(question)
+    matched_career = await find_matching_career(question)
     if matched_career:
-        roadmap = ROADMAPS[matched_career]["steps"]
-        courses = COURSES[matched_career]
+        roadmap = await sync_to_async(lambda: list(RoadmapStep.objects.filter(career_path__name=matched_career).values_list('step_text', flat=True)))()
+        courses = await sync_to_async(lambda: list(Course.objects.filter(career_path__name=matched_career).values('name', 'platform', 'link')))()
 
-    ChatQuestion.objects.create(
+    await sync_to_async(ChatQuestion.objects.create)(
         user=request.user,
         question=question,
         answer_html=answer,
         matched_career=matched_career,
     )
 
-    return render_home(request, answer=answer, roadmap=roadmap, courses=courses, asked_question=question, active_waypoint="waypoint-01")
+    return await sync_to_async(render_home)(request, answer=answer, roadmap=roadmap, courses=courses, asked_question=question, active_waypoint="waypoint-01")
 
 
 @login_required
 @require_POST
-def analyze_resume(request):
+@ratelimit(key='user_or_ip', rate='5/m', block=False)
+async def analyze_resume(request):
     """POST /resume/ — resume upload + AI feedback."""
+    if getattr(request, 'limited', False):
+        return await sync_to_async(render_home)(request, resume_error="You're analyzing resumes too quickly. Please wait a moment.", active_waypoint="waypoint-02")
     uploaded_file = request.FILES.get("resume_file")
 
     if not uploaded_file:
-        return render_home(request, resume_error="Choose a PDF or DOCX file before analyzing.", active_waypoint="waypoint-02")
+        return await sync_to_async(render_home)(request, resume_error="Choose a PDF or DOCX file before analyzing.", active_waypoint="waypoint-02")
 
     resume_text = extract_text_from_file(uploaded_file)
 
     if resume_text is None:
-        return render_home(request, resume_error="Couldn't read that file — make sure it's a valid PDF or DOCX.", active_waypoint="waypoint-02")
+        return await sync_to_async(render_home)(request, resume_error="Couldn't read that file — make sure it's a valid PDF or DOCX.", active_waypoint="waypoint-02")
     if not resume_text.strip():
-        return render_home(request, resume_error="That file looks empty — try a different resume.", active_waypoint="waypoint-02")
+        return await sync_to_async(render_home)(request, resume_error="That file looks empty — try a different resume.", active_waypoint="waypoint-02")
 
-    raw_feedback = get_ai_response(
+    request.session["saved_resume_text"] = resume_text
+    request.session["saved_resume_filename"] = uploaded_file.name
+
+    raw_feedback = await get_ai_response(
         "You are a professional resume reviewer. Analyze the given resume "
         "text and provide clear, structured feedback using markdown "
         "headings and bullet points: 1) Missing sections (if any), "
@@ -371,107 +389,117 @@ def analyze_resume(request):
     )
 
     if raw_feedback is None:
-        return render_home(request, resume_error="Couldn't reach the AI just now — please try again in a moment.", active_waypoint="waypoint-02")
+        return await sync_to_async(render_home)(request, resume_error="Couldn't reach the AI just now — please try again in a moment.", active_waypoint="waypoint-02")
 
     resume_feedback = to_html(raw_feedback)
 
-    ResumeReport.objects.create(
+    await sync_to_async(ResumeReport.objects.create)(
         user=request.user,
         filename=uploaded_file.name,
         feedback_html=resume_feedback,
     )
 
-    return render_home(request, resume_feedback=resume_feedback, active_waypoint="waypoint-02")
+    return await sync_to_async(render_home)(request, resume_feedback=resume_feedback, active_waypoint="waypoint-02")
+
+
+class SkillGapResponse(BaseModel):
+    feedback_markdown: str
+    missing_skills: list[str]
 
 
 @login_required
 @require_POST
-def analyze_skill_gap(request):
+@ratelimit(key='user_or_ip', rate='5/m', block=False)
+async def analyze_skill_gap(request):
     """POST /skill-gap/ — resume + target role → gap report."""
+    if getattr(request, 'limited', False):
+        return await sync_to_async(render_home)(request, skill_gap_error="You're checking skill gaps too quickly. Please wait a moment.", active_waypoint="waypoint-03")
     uploaded_file = request.FILES.get("skill_gap_resume")
     target_role = request.POST.get("skill_gap_role")
 
-    if not uploaded_file:
-        return render_home(request, skill_gap_error="Choose a PDF or DOCX file before checking your skill gap.", active_waypoint="waypoint-03")
-    if not target_role or target_role not in ROADMAPS:
-        return render_home(request, skill_gap_error="Pick a valid target role first.", active_waypoint="waypoint-03")
+    if uploaded_file:
+        resume_text = extract_text_from_file(uploaded_file)
+        if resume_text is None:
+            return await sync_to_async(render_home)(request, skill_gap_error="Couldn't read that file — make sure it's a valid PDF or DOCX.", active_waypoint="waypoint-03")
+        if not resume_text.strip():
+            return await sync_to_async(render_home)(request, skill_gap_error="That file looks empty — try a different resume.", active_waypoint="waypoint-03")
+        
+        request.session["saved_resume_text"] = resume_text
+        request.session["saved_resume_filename"] = uploaded_file.name
+    else:
+        resume_text = request.session.get("saved_resume_text")
+        if not resume_text:
+            return await sync_to_async(render_home)(request, skill_gap_error="Choose a PDF or DOCX file before checking your skill gap.", active_waypoint="waypoint-03")
 
-    resume_text = extract_text_from_file(uploaded_file)
+    valid_roles = await sync_to_async(lambda: list(CareerPath.objects.values_list('name', flat=True)))()
+    if not target_role or target_role not in valid_roles:
+        return await sync_to_async(render_home)(request, skill_gap_error="Pick a valid target role first.", active_waypoint="waypoint-03")
 
-    if resume_text is None:
-        return render_home(request, skill_gap_error="Couldn't read that file — make sure it's a valid PDF or DOCX.", active_waypoint="waypoint-03")
-    if not resume_text.strip():
-        return render_home(request, skill_gap_error="That file looks empty — try a different resume.", active_waypoint="waypoint-03")
-
-    roadmap_steps = "\n".join(f"- {step}" for step in ROADMAPS[target_role]["steps"])
+    steps = await sync_to_async(lambda: list(RoadmapStep.objects.filter(career_path__name=target_role).values_list('step_text', flat=True)))()
+    roadmap_steps = "\n".join(f"- {step}" for step in steps)
 
     system_prompt = (
         f"You are a career skills advisor. Below is the learning roadmap "
         f"for a {target_role} role:\n\n{roadmap_steps}\n\n"
         "Compare the candidate's resume text against this roadmap and "
-        "provide structured feedback using markdown headings and bullet "
-        "points: 1) Skills the candidate already has that match this "
-        "role, 2) Skills/technologies from the roadmap that are missing "
-        "from the resume, 3) A prioritised list of 3-5 skills they "
-        "should focus on learning next, with a short reason for each. "
-        "Be specific and reference the roadmap directly.\n\n"
-        "After the full report, add exactly one final line with no "
-        "markdown, no bullets, in this exact format:\n"
-        "MISSING_SKILLS: skill one, skill two, skill three\n"
-        "List 3-6 short skill or technology names (not sentences) that "
-        "are missing, matching how they're named in the roadmap. This "
-        "must be the very last line of your response."
+        "provide structured feedback. For 'feedback_markdown', use markdown "
+        "headings and bullet points: 1) Skills the candidate already has "
+        "that match this role, 2) Skills/technologies from the roadmap "
+        "that are missing from the resume, 3) A prioritised list of 3-5 "
+        "skills they should focus on learning next, with a short reason "
+        "for each. Be specific and reference the roadmap directly.\n\n"
+        "For 'missing_skills', provide a list of 3-6 short skill or "
+        "technology names (not sentences) that are missing, matching how "
+        "they're named in the roadmap."
     )
-    raw_feedback = get_ai_response(system_prompt, resume_text)
+    parsed_response = await get_ai_response(system_prompt, resume_text, response_format=SkillGapResponse)
 
-    if raw_feedback is None:
-        return render_home(request, skill_gap_error="Couldn't reach the AI just now — please try again in a moment.", active_waypoint="waypoint-03")
+    if parsed_response is None:
+        return await sync_to_async(render_home)(request, skill_gap_error="Couldn't reach the AI just now — please try again in a moment.", active_waypoint="waypoint-03")
 
-    # Pull the machine-readable MISSING_SKILLS line out before rendering —
-    # it's for the trend chart, not something the user needs to see.
-    missing_skills = ""
-    lines = raw_feedback.strip().split("\n")
-    if lines and lines[-1].strip().upper().startswith("MISSING_SKILLS:"):
-        missing_skills = lines[-1].split(":", 1)[1].strip()
-        raw_feedback = "\n".join(lines[:-1]).strip()
+    missing_skills = ", ".join(parsed_response.missing_skills)
+    skill_gap_feedback = to_html(parsed_response.feedback_markdown)
 
-    skill_gap_feedback = to_html(raw_feedback)
-
-    SkillGapReport.objects.create(
+    await sync_to_async(SkillGapReport.objects.create)(
         user=request.user,
         target_role=target_role,
         feedback_html=skill_gap_feedback,
         missing_skills=missing_skills,
     )
 
-    return render_home(request, skill_gap_feedback=skill_gap_feedback, skill_gap_role=target_role, active_waypoint="waypoint-03")
+    return await sync_to_async(render_home)(request, skill_gap_feedback=skill_gap_feedback, skill_gap_role=target_role, active_waypoint="waypoint-03")
 
 
 @login_required
 @require_POST
-def start_interview(request):
+@ratelimit(key='user_or_ip', rate='5/m', block=False)
+async def start_interview(request):
     """POST /interview/start/ — begins a new mock interview."""
+    if getattr(request, 'limited', False):
+        return await sync_to_async(render_home)(request, interview_error="You're starting interviews too quickly. Please wait a moment.", active_waypoint="waypoint-04")
+
     role = request.POST.get("interview_role")
 
-    if not role or role not in ROADMAPS:
-        return render_home(request, interview_error="Pick a valid role first.", active_waypoint="waypoint-04")
+    valid_roles = await sync_to_async(lambda: list(CareerPath.objects.values_list('name', flat=True)))()
+    if not role or role not in valid_roles:
+        return await sync_to_async(render_home)(request, interview_error="Pick a valid role first.", active_waypoint="waypoint-04")
 
     system_prompt = (
         f"You are conducting a mock interview for a {role} position. "
         "Ask one relevant, realistic interview question. "
         "Reply with just the question — no extra text, no markdown."
     )
-    question = get_ai_response(system_prompt, "Ask the first interview question.")
+    question = await get_ai_response(system_prompt, "Ask the first interview question.")
 
     if question is None:
-        return render_home(request, interview_error="Couldn't reach the AI just now — please try again in a moment.", active_waypoint="waypoint-04")
+        return await sync_to_async(render_home)(request, interview_error="Couldn't reach the AI just now — please try again in a moment.", active_waypoint="waypoint-04")
 
     request.session["interview_role"] = role
     request.session["interview_history"] = [
         {"question": question, "answer": None}
     ]
 
-    return render_home(
+    return await sync_to_async(render_home)(
         request,
         interview_question=question,
         interview_role=role,
@@ -482,35 +510,65 @@ def start_interview(request):
 
 @login_required
 @require_POST
-def submit_interview_answer(request):
+@ratelimit(key='user_or_ip', rate='10/m', block=False)
+async def submit_interview_answer(request):
     """POST /interview/answer/ — records an answer, asks the next question
     or (on the final question) returns the full feedback report."""
+    if getattr(request, 'limited', False):
+        return await sync_to_async(render_home)(request, interview_error="You're submitting answers too quickly. Please wait a moment.", active_waypoint="waypoint-04")
+
     user_answer = request.POST.get("interview_answer", "")
     role = request.session.get("interview_role")
     history_data = request.session.get("interview_history", [])
 
+    if not user_answer:
+        return await sync_to_async(render_home)(request, interview_error="Type an answer before hitting submit.", active_waypoint="waypoint-04")
+
     if history_data:
         history_data[-1]["answer"] = user_answer
+        request.session["interview_history"] = history_data
+    
+    is_final = len(history_data) >= INTERVIEW_LENGTH
 
-    if role and len(history_data) < INTERVIEW_LENGTH:
-        qa_summary = "\n".join(
-            f"Q: {h['question']}\nA: {h['answer']}" for h in history_data
+    if is_final:
+        final_prompt = (
+            f"Review the candidate's {INTERVIEW_LENGTH} answers for the "
+            f"{role} role. Provide a structured feedback report with "
+            "markdown headings: 1) Overall impression, 2) Strengths, "
+            "3) Areas to improve, 4) One practical tip for their next "
+            "real interview."
         )
-        system_prompt = (
-            f"You are conducting a mock interview for a {role} position. "
-            "Based on the conversation so far, ask the next relevant "
-            "interview question. Reply with just the question — no "
-            "extra text, no markdown."
+        history_data.append({"role": "system", "content": final_prompt})
+        raw = await get_ai_response("You are an expert interviewer giving final feedback.", repr(history_data))
+
+        if raw is None:
+            return await sync_to_async(render_home)(request, interview_error="Couldn't reach the AI just now — please try again in a moment.", active_waypoint="waypoint-04")
+
+        feedback_html = to_html(raw)
+
+        await sync_to_async(InterviewReport.objects.create)(
+            user=request.user,
+            target_role=role,
+            feedback_html=feedback_html,
         )
-        next_question = get_ai_response(system_prompt, qa_summary)
 
-        if next_question is None:
-            return render_home(request, interview_error="Couldn't reach the AI just now — please try again in a moment.", active_waypoint="waypoint-04")
+        request.session.pop("interview_history", None)
+        request.session.pop("interview_role", None)
 
+        return await sync_to_async(render_home)(request, interview_feedback=feedback_html, active_waypoint="waypoint-04")
+    
+    else:
+        history_data.append({"role": "system", "content": "Ask the next relevant interview question. Respond with ONLY the question text."})
+        raw = await get_ai_response(f"You are an expert interviewer for a {role} position.", repr(history_data))
+
+        if raw is None:
+            return await sync_to_async(render_home)(request, interview_error="Couldn't reach the AI just now — please try again in a moment.", active_waypoint="waypoint-04")
+
+        next_question = raw.strip()
         history_data.append({"question": next_question, "answer": None})
         request.session["interview_history"] = history_data
 
-        return render_home(
+        return await sync_to_async(render_home)(
             request,
             interview_question=next_question,
             interview_role=role,
@@ -518,135 +576,26 @@ def submit_interview_answer(request):
             active_waypoint="waypoint-04",
         )
 
-    elif role:
-        qa_summary = "\n".join(
-            f"Q: {h['question']}\nA: {h['answer']}" for h in history_data
-        )
-        system_prompt = (
-            f"You just conducted a mock interview for a {role} position. "
-            "Review the candidate's answers below and give constructive "
-            "feedback using markdown headings and bullet points: "
-            "1) Overall impression, 2) Strengths, 3) Areas to improve, "
-            "4) One practical tip for their next real interview. "
-            "Be encouraging but honest."
-        )
-        raw_feedback = get_ai_response(system_prompt, qa_summary)
-
-        if raw_feedback is None:
-            return render_home(request, interview_error="Couldn't reach the AI just now — please try again in a moment.", active_waypoint="waypoint-04")
-
-        interview_feedback = to_html(raw_feedback)
-
-        InterviewReport.objects.create(
-            user=request.user,
-            role=role,
-            feedback_html=interview_feedback,
-        )
-
-        request.session["interview_role"] = None
-        request.session["interview_history"] = []
-
-        return render_home(request, interview_feedback=interview_feedback, active_waypoint="waypoint-04")
-
-    return render_home(request)
-
 
 # =========================================================
 # PDF export — download resume/interview feedback as PDF
 # =========================================================
 
-PINE = colors.HexColor("#2F4B3C")
-BLAZE = colors.HexColor("#E2632A")
-MOSS = colors.HexColor("#7C9083")
-INK = colors.HexColor("#1E2B22")
-
-
-def _pdf_styles():
-    styles = getSampleStyleSheet()
-    styles.add(ParagraphStyle(
-        name="TMEyebrow", fontSize=9, leading=11, textColor=BLAZE,
-        fontName="Helvetica-Bold", spaceAfter=6,
-    ))
-    styles.add(ParagraphStyle(
-        name="TMTitle", fontSize=20, leading=24, textColor=PINE,
-        fontName="Helvetica-Bold", spaceAfter=4,
-    ))
-    styles.add(ParagraphStyle(
-        name="TMSub", fontSize=10, leading=14, textColor=MOSS,
-        fontName="Helvetica", spaceAfter=20,
-    ))
-    styles.add(ParagraphStyle(
-        name="TMHeading", fontSize=13, leading=17, textColor=PINE,
-        fontName="Helvetica-Bold", spaceBefore=14, spaceAfter=6,
-    ))
-    styles.add(ParagraphStyle(
-        name="TMBody", fontSize=10.5, leading=15, textColor=INK,
-        fontName="Helvetica", spaceAfter=6,
-    ))
-    return styles
-
-
-def _clean_inline(html_fragment):
-    """reportlab's Paragraph only understands a handful of tags — swap the
-    ones markdown.markdown() produces for reportlab-friendly equivalents."""
-    return (
-        (html_fragment or "")
-        .replace("<strong>", "<b>").replace("</strong>", "</b>")
-        .replace("<em>", "<i>").replace("</em>", "</i>")
-        .replace("<code>", "<font face='Courier'>").replace("</code>", "</font>")
-    )
-
-
-def _html_to_flowables(html, styles):
-    """Walks the stored feedback HTML and turns it into reportlab flowables,
-    so the PDF keeps the same headings/bold/bullets the web page shows."""
-    soup = BeautifulSoup(html or "", "html.parser")
-    flowables = []
-
-    for el in soup.find_all(["h1", "h2", "h3", "h4", "p", "ul", "ol", "hr"], recursive=False):
-        if el.name in ("h1", "h2", "h3", "h4"):
-            flowables.append(Paragraph(el.get_text(), styles["TMHeading"]))
-        elif el.name == "p":
-            flowables.append(Paragraph(_clean_inline(el.decode_contents()), styles["TMBody"]))
-        elif el.name in ("ul", "ol"):
-            items = []
-            for li in el.find_all("li", recursive=False):
-                items.append(ListItem(
-                    Paragraph(_clean_inline(li.decode_contents()), styles["TMBody"]),
-                    bulletColor=BLAZE,
-                ))
-            flowables.append(ListFlowable(
-                items,
-                bulletType="bullet" if el.name == "ul" else "1",
-                leftIndent=16,
-            ))
-        elif el.name == "hr":
-            flowables.append(Spacer(1, 10))
-
-    return flowables
-
-
 def _build_pdf_response(filename, title, subtitle, html_body):
-    buffer = io.BytesIO()
-    doc = SimpleDocTemplate(
-        buffer, pagesize=LETTER,
-        topMargin=0.85 * inch, bottomMargin=0.85 * inch,
-        leftMargin=0.9 * inch, rightMargin=0.9 * inch,
+    html_string = render_to_string('pdf_template.html', {
+        'title': title,
+        'subtitle': subtitle,
+        'html_body': html_body
+    })
+    
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    
+    pisa_status = pisa.CreatePDF(
+       html_string, dest=response
     )
-    styles = _pdf_styles()
-
-    story = [
-        Paragraph("TRAILMARK", styles["TMEyebrow"]),
-        Paragraph(title, styles["TMTitle"]),
-        Paragraph(subtitle, styles["TMSub"]),
-    ]
-    story.extend(_html_to_flowables(html_body, styles))
-
-    doc.build(story)
-    buffer.seek(0)
-
-    response = HttpResponse(buffer, content_type="application/pdf")
-    response["Content-Disposition"] = f'attachment; filename="{filename}"'
+    if pisa_status.err:
+       return HttpResponse('We had some errors <pre>' + html_string + '</pre>')
     return response
 
 
