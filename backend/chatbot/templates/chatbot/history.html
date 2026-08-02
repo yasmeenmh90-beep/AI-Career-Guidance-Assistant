@@ -102,7 +102,29 @@
     .legend-count { font-family: var(--font-mono); font-weight: 700; color: var(--pine); font-size: 0.85rem; }
     .legend-percent { font-family: var(--font-mono); font-size: 0.72rem; color: var(--moss); width: 34px; text-align: right; }
 
+    /* ---------- Activity Over Time: monthly trend bars ---------- */
+    .month-bar-list { display: flex; flex-direction: column; gap: 0.65rem; }
+    .month-bar-row { display: flex; align-items: center; gap: 0.8rem; }
+    .month-bar-label {
+        width: 72px; flex-shrink: 0; font-family: var(--font-mono);
+        font-size: 0.75rem; color: var(--ink-soft);
+    }
+    .month-bar-track {
+        flex: 1; height: 18px; background: var(--bg); border: 1px solid var(--line);
+        border-radius: 999px; overflow: hidden;
+    }
+    .month-bar-fill {
+        height: 100%; border-radius: 999px;
+        background: linear-gradient(90deg, var(--pine), var(--focus));
+        transition: width 500ms ease;
+    }
+    .month-bar-count {
+        width: 22px; flex-shrink: 0; text-align: right; font-family: var(--font-mono);
+        font-size: 0.78rem; color: var(--pine); font-weight: 700;
+    }
+
     /* ---------- Skill Gap Trends: ranked list ---------- */
+
     .skill-rank-list { display: flex; flex-direction: column; gap: 0.75rem; }
     .skill-rank-row {
         display: flex; align-items: center; gap: 0.9rem;
@@ -246,6 +268,27 @@
             </div>
             {% else %}
             <p class="chart-empty">Run a skill-gap analysis to start seeing which skills come up most often.</p>
+            {% endif %}
+        </div>
+
+        <div class="chart-card">
+            <span class="chart-title">Trend</span>
+            <h2 class="chart-subtitle">📈 Activity Over Time</h2>
+
+            {% if monthly_trend %}
+            <div class="month-bar-list">
+                {% for m in monthly_trend %}
+                <div class="month-bar-row">
+                    <span class="month-bar-label">{{ m.label }}</span>
+                    <div class="month-bar-track">
+                        <div class="month-bar-fill" style="width: {{ m.percent }}%;"></div>
+                    </div>
+                    <span class="month-bar-count">{{ m.count }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="chart-empty">Use the app across a few different days to start seeing your activity trend here.</p>
             {% endif %}
         </div>
 

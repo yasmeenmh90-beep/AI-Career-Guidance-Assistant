@@ -22,6 +22,8 @@ urlpatterns = [
     # Feature endpoints — one per action
     path('ask/', views.ask_question, name='ask_question'),
     path('resume/', views.analyze_resume, name='analyze_resume'),
+    path('resume/refine/', views.refine_resume, name='refine_resume'),
+    path('resume/refine/pdf/', views.download_refined_resume_pdf, name='download_refined_resume_pdf'),
     path('skill-gap/', views.analyze_skill_gap, name='analyze_skill_gap'),
     path('interview/start/', views.start_interview, name='start_interview'),
     path('interview/answer/', views.submit_interview_answer, name='submit_interview_answer'),
