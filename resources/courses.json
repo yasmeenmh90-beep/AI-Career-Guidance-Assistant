@@ -1,40 +1,232 @@
 {
   "AI Engineer": [
-    {"name": "Machine Learning Specialization - Andrew Ng", "platform": "Coursera", "link": "https://www.coursera.org/specializations/machine-learning-introduction"},
-    {"name": "Deep Learning Specialization", "platform": "Coursera", "link": "https://www.coursera.org/specializations/deep-learning"},
-    {"name": "Python for Data Science and AI", "platform": "edX", "link": "https://www.edx.org/learn/python"}
+    {
+      "name": "Machine Learning Specialization - Andrew Ng",
+      "platform": "Coursera",
+      "link": "https://www.coursera.org/specializations/machine-learning-introduction"
+    },
+    {
+      "name": "Deep Learning Specialization",
+      "platform": "Coursera",
+      "link": "https://www.coursera.org/specializations/deep-learning"
+    },
+    {
+      "name": "Python for Data Science and AI",
+      "platform": "edX",
+      "link": "https://www.edx.org/learn/python"
+    }
   ],
   "Data Scientist": [
-    {"name": "IBM Data Science Professional Certificate", "platform": "Coursera", "link": "https://www.coursera.org/professional-certificates/ibm-data-science"},
-    {"name": "Data Analysis with Python", "platform": "freeCodeCamp", "link": "https://www.freecodecamp.org/learn/data-analysis-with-python/"},
-    {"name": "SQL for Data Science", "platform": "Coursera", "link": "https://www.coursera.org/learn/sql-for-data-science"}
+    {
+      "name": "IBM Data Science Professional Certificate",
+      "platform": "Coursera",
+      "link": "https://www.coursera.org/professional-certificates/ibm-data-science"
+    },
+    {
+      "name": "Data Analysis with Python",
+      "platform": "freeCodeCamp",
+      "link": "https://www.freecodecamp.org/learn/data-analysis-with-python/"
+    },
+    {
+      "name": "SQL for Data Science",
+      "platform": "Coursera",
+      "link": "https://www.coursera.org/learn/sql-for-data-science"
+    }
   ],
   "Web Developer": [
-    {"name": "The Web Developer Bootcamp", "platform": "Udemy", "link": "https://www.udemy.com/course/the-web-developer-bootcamp/"},
-    {"name": "Full Stack Open", "platform": "University of Helsinki", "link": "https://fullstackopen.com/en/"},
-    {"name": "React - The Complete Guide", "platform": "Udemy", "link": "https://www.udemy.com/course/react-the-complete-guide-incl-redux/"}
+    {
+      "name": "The Web Developer Bootcamp",
+      "platform": "Udemy",
+      "link": "https://www.udemy.com/course/the-web-developer-bootcamp/"
+    },
+    {
+      "name": "Full Stack Open",
+      "platform": "University of Helsinki",
+      "link": "https://fullstackopen.com/en/"
+    },
+    {
+      "name": "React - The Complete Guide",
+      "platform": "Udemy",
+      "link": "https://www.udemy.com/course/react-the-complete-guide-incl-redux/"
+    }
   ],
   "Cloud Engineer": [
-    {"name": "AWS Cloud Practitioner Essentials", "platform": "Coursera", "link": "https://www.coursera.org/learn/aws-cloud-practitioner-essentials"},
-    {"name": "Microsoft Azure Fundamentals AZ-900 Exam Prep", "platform": "Coursera", "link": "https://www.coursera.org/specializations/microsoft-azure-fundamentals-az900-exam-prep"},
-    {"name": "AWS Cloud Technical Essentials", "platform": "Coursera", "link": "https://www.coursera.org/learn/aws-cloud-technical-essentials"}
+    {
+      "name": "AWS Cloud Practitioner Essentials",
+      "platform": "Coursera",
+      "link": "https://www.coursera.org/learn/aws-cloud-practitioner-essentials"
+    },
+    {
+      "name": "Microsoft Azure Fundamentals AZ-900 Exam Prep",
+      "platform": "Coursera",
+      "link": "https://www.coursera.org/specializations/microsoft-azure-fundamentals-az900-exam-prep"
+    },
+    {
+      "name": "AWS Cloud Technical Essentials",
+      "platform": "Coursera",
+      "link": "https://www.coursera.org/learn/aws-cloud-technical-essentials"
+    }
   ],
   "Cybersecurity Analyst": [
-    {"name": "Google Cybersecurity Professional Certificate", "platform": "Coursera", "link": "https://www.coursera.org/professional-certificates/google-cybersecurity"},
-    {"name": "Foundations of Cybersecurity", "platform": "Coursera", "link": "https://www.coursera.org/learn/foundations-of-cybersecurity"}
+    {
+      "name": "Google Cybersecurity Professional Certificate",
+      "platform": "Coursera",
+      "link": "https://www.coursera.org/professional-certificates/google-cybersecurity"
+    },
+    {
+      "name": "Foundations of Cybersecurity",
+      "platform": "Coursera",
+      "link": "https://www.coursera.org/learn/foundations-of-cybersecurity"
+    }
   ],
   "Data Analyst": [
-    {"name": "Google Data Analytics Professional Certificate", "platform": "Coursera", "link": "https://www.coursera.org/professional-certificates/google-data-analytics"},
-    {"name": "IBM Data Analyst Professional Certificate", "platform": "Coursera", "link": "https://www.coursera.org/professional-certificates/ibm-data-analyst"},
-    {"name": "Foundations: Data, Data, Everywhere", "platform": "Coursera", "link": "https://www.coursera.org/learn/foundations-data"}
+    {
+      "name": "Google Data Analytics Professional Certificate",
+      "platform": "Coursera",
+      "link": "https://www.coursera.org/professional-certificates/google-data-analytics"
+    },
+    {
+      "name": "IBM Data Analyst Professional Certificate",
+      "platform": "Coursera",
+      "link": "https://www.coursera.org/professional-certificates/ibm-data-analyst"
+    },
+    {
+      "name": "Foundations: Data, Data, Everywhere",
+      "platform": "Coursera",
+      "link": "https://www.coursera.org/learn/foundations-data"
+    }
   ],
   "UI/UX Designer": [
-    {"name": "Google UX Design Professional Certificate", "platform": "Coursera", "link": "https://www.coursera.org/professional-certificates/google-ux-design"},
-    {"name": "UI/UX Design Specialization - CalArts", "platform": "Coursera", "link": "https://www.coursera.org/specializations/ui-ux-design"},
-    {"name": "Foundations of User Experience (UX) Design", "platform": "Coursera", "link": "https://www.coursera.org/learn/foundations-user-experience-design"}
+    {
+      "name": "Google UX Design Professional Certificate",
+      "platform": "Coursera",
+      "link": "https://www.coursera.org/professional-certificates/google-ux-design"
+    },
+    {
+      "name": "UI/UX Design Specialization - CalArts",
+      "platform": "Coursera",
+      "link": "https://www.coursera.org/specializations/ui-ux-design"
+    },
+    {
+      "name": "Foundations of User Experience (UX) Design",
+      "platform": "Coursera",
+      "link": "https://www.coursera.org/learn/foundations-user-experience-design"
+    }
   ],
   "DevOps Engineer": [
-    {"name": "IBM DevOps and Software Engineering Professional Certificate", "platform": "Coursera", "link": "https://www.coursera.org/professional-certificates/devops-and-software-engineering"},
-    {"name": "IBM Applied DevOps Engineering Professional Certificate", "platform": "Coursera", "link": "https://www.coursera.org/professional-certificates/ibm-applied-devops-engineering"}
+    {
+      "name": "IBM DevOps and Software Engineering Professional Certificate",
+      "platform": "Coursera",
+      "link": "https://www.coursera.org/professional-certificates/devops-and-software-engineering"
+    },
+    {
+      "name": "IBM Applied DevOps Engineering Professional Certificate",
+      "platform": "Coursera",
+      "link": "https://www.coursera.org/professional-certificates/ibm-applied-devops-engineering"
+    }
+  ],
+  "Product Manager": [
+    {
+      "name": "Google Project Management Professional Certificate",
+      "platform": "Coursera",
+      "link": "https://www.coursera.org/professional-certificates/google-project-management/"
+    },
+    {
+      "name": "Product Management Certification",
+      "platform": "Coursera",
+      "link": "https://www.coursera.org/specializations/product-management-certification"
+    }
+  ],
+  "Backend Developer": [
+    {
+      "name": "Meta Back-End Developer Professional Certificate",
+      "platform": "Coursera",
+      "link": "https://www.coursera.org/professional-certificates/meta-back-end-developer"
+    }
+  ],
+  "Frontend Developer": [
+    {
+      "name": "Meta Front-End Developer Professional Certificate",
+      "platform": "Coursera",
+      "link": "https://www.coursera.org/professional-certificates/meta-front-end-developer"
+    }
+  ],
+  "Mobile App Developer": [
+    {
+      "name": "Meta Android Developer Professional Certificate",
+      "platform": "Coursera",
+      "link": "https://www.coursera.org/professional-certificates/meta-android-developer"
+    }
+  ],
+  "QA / Test Automation Engineer": [
+    {
+      "name": "Software Testing Fundamentals for ISTQB Exams Prep",
+      "platform": "Coursera",
+      "link": "https://www.coursera.org/specializations/istqb-ctfl-prep"
+    }
+  ],
+  "Blockchain Developer": [
+    {
+      "name": "Blockchain Basics",
+      "platform": "Coursera",
+      "link": "https://www.coursera.org/learn/blockchain-basics"
+    },
+    {
+      "name": "Introduction to Blockchain Specialization",
+      "platform": "Coursera",
+      "link": "https://www.coursera.org/specializations/introduction-to-blockchain"
+    }
+  ],
+  "Game Developer": [
+    {
+      "name": "Game Design and Development with Unity",
+      "platform": "Coursera",
+      "link": "https://www.coursera.org/specializations/game-design-and-development"
+    },
+    {
+      "name": "Unity Game Development Foundations & 2D Projects",
+      "platform": "Coursera",
+      "link": "https://www.coursera.org/specializations/unity-game-development-foundations-2d-projects"
+    }
+  ],
+  "Business Analyst": [
+    {
+      "name": "IBM Business Analyst Professional Certificate",
+      "platform": "Coursera",
+      "link": "https://www.coursera.org/professional-certificates/ibm-business-analyst-professional-certificate"
+    }
+  ],
+  "Database Administrator": [
+    {
+      "name": "IBM Relational Database Administrator Professional Certificate",
+      "platform": "Coursera",
+      "link": "https://www.coursera.org/professional-certificates/ibm-relational-database-administrator"
+    }
+  ],
+  "Network / Systems Administrator": [
+    {
+      "name": "Google IT Support Professional Certificate",
+      "platform": "Coursera",
+      "link": "https://www.coursera.org/professional-certificates/google-it-support"
+    }
+  ],
+  "Digital Marketing Specialist": [
+    {
+      "name": "Google Digital Marketing & E-commerce Professional Certificate",
+      "platform": "Coursera",
+      "link": "https://www.coursera.org/professional-certificates/google-digital-marketing-ecommerce"
+    }
+  ],
+  "Technical Writer": [
+    {
+      "name": "Introduction to Technical Writing",
+      "platform": "Coursera",
+      "link": "https://www.coursera.org/learn/technical-writing-introduction"
+    },
+    {
+      "name": "Technical Writing One (free)",
+      "platform": "Google for Developers",
+      "link": "https://developers.google.com/tech-writing/one"
+    }
   ]
 }

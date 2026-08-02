@@ -94,5 +94,149 @@
       "Learn cloud fundamentals (AWS, Azure, or GCP)",
       "Apply for junior DevOps or platform engineer roles"
     ]
+  },
+  "Product Manager": {
+    "steps": [
+      "Learn the fundamentals of product management (lifecycle, discovery, delivery)",
+      "Study Agile and Scrum methodologies",
+      "Learn user research and customer interview techniques",
+      "Learn to write user stories, PRDs, and prioritize a backlog",
+      "Learn basic data analysis and A/B testing for product decisions",
+      "Learn wireframing/prototyping tools (Figma) to communicate with design",
+      "Build a portfolio case study of a product you've shipped or redesigned",
+      "Apply for associate or junior product manager roles"
+    ]
+  },
+  "Backend Developer": {
+    "steps": [
+      "Learn a backend language (Python, Node.js, or Java)",
+      "Learn HTML/CSS/JavaScript fundamentals for context",
+      "Learn databases (SQL and NoSQL) and how to design schemas",
+      "Learn REST API design and authentication",
+      "Learn version control with Git",
+      "Learn testing, debugging, and basic containerization (Docker)",
+      "Build 2-3 backend projects with a real database and API",
+      "Apply for junior backend developer roles"
+    ]
+  },
+  "Frontend Developer": {
+    "steps": [
+      "Learn HTML, CSS, and JavaScript fundamentals",
+      "Learn responsive design and a CSS framework (Bootstrap or Tailwind)",
+      "Learn a frontend framework (React)",
+      "Learn version control with Git and GitHub",
+      "Learn how to consume REST APIs from the frontend",
+      "Learn accessibility and cross-browser testing basics",
+      "Build 3-4 portfolio projects and deploy them",
+      "Apply for junior frontend developer roles"
+    ]
+  },
+  "Mobile App Developer": {
+    "steps": [
+      "Learn programming fundamentals (Kotlin for Android or Swift for iOS)",
+      "Learn mobile UI design principles and platform guidelines",
+      "Learn to use Android Studio or Xcode",
+      "Learn to work with APIs and local data storage on mobile",
+      "Learn app architecture patterns (MVVM)",
+      "Learn to test and publish apps (Play Store / App Store basics)",
+      "Build 2-3 portfolio apps",
+      "Apply for junior mobile developer roles"
+    ]
+  },
+  "QA / Test Automation Engineer": {
+    "steps": [
+      "Learn software testing fundamentals (manual testing, test cases, bug reports)",
+      "Learn the software development lifecycle and where testing fits in",
+      "Learn a programming language for automation (Python or JavaScript)",
+      "Learn automation tools (Selenium or Playwright)",
+      "Learn API testing (Postman)",
+      "Learn CI/CD basics and integrating tests into pipelines",
+      "Build a test automation portfolio project",
+      "Apply for junior QA or test engineer roles"
+    ]
+  },
+  "Blockchain Developer": {
+    "steps": [
+      "Learn programming fundamentals (JavaScript or Python)",
+      "Learn blockchain and cryptocurrency fundamentals (Bitcoin, Ethereum)",
+      "Learn cryptography and consensus mechanisms",
+      "Learn Solidity and smart contract development",
+      "Learn development tools (Remix, Truffle, or Hardhat)",
+      "Learn to build decentralized applications (Dapps)",
+      "Build 2-3 smart contract/Dapp portfolio projects",
+      "Apply for junior blockchain developer roles"
+    ]
+  },
+  "Game Developer": {
+    "steps": [
+      "Learn a programming language used in game dev (C# or C++)",
+      "Learn a game engine (Unity or Unreal Engine)",
+      "Study core game design principles (mechanics, level design, player experience)",
+      "Learn 2D/3D graphics, animation, and physics basics",
+      "Learn game audio and UI/UX for games",
+      "Build 2-3 small complete games (e.g. a platformer, a shooter)",
+      "Learn to optimize performance and publish/export a build",
+      "Apply for junior game developer or QA roles in game studios"
+    ]
+  },
+  "Business Analyst": {
+    "steps": [
+      "Learn business analysis fundamentals (requirements gathering, stakeholder analysis)",
+      "Learn process modeling and process mapping",
+      "Learn SQL and spreadsheets (Excel/Google Sheets) for data analysis",
+      "Learn data visualization and dashboard tools (Power BI or Tableau)",
+      "Study project management basics (Agile/Scrum)",
+      "Practice writing business requirement documents (BRDs)",
+      "Build a portfolio case study analyzing a real or sample business problem",
+      "Apply for junior/associate business analyst roles"
+    ]
+  },
+  "Database Administrator": {
+    "steps": [
+      "Learn relational database fundamentals and SQL",
+      "Learn database design and normalization",
+      "Learn a DBMS in depth (MySQL, PostgreSQL, or IBM Db2)",
+      "Learn backup, recovery, and database security practices",
+      "Learn performance tuning and query optimization",
+      "Learn basic scripting (Python or Bash) for automation",
+      "Practice on a real database project (design, populate, maintain)",
+      "Apply for junior database administrator or database analyst roles"
+    ]
+  },
+  "Network / Systems Administrator": {
+    "steps": [
+      "Learn computer networking fundamentals (TCP/IP, DNS, DHCP)",
+      "Learn operating systems administration (Linux and Windows)",
+      "Learn hardware, troubleshooting, and IT support basics",
+      "Learn system administration tools and scripting (Bash/PowerShell)",
+      "Learn cloud fundamentals (AWS, Azure, or GCP)",
+      "Learn IT security basics (firewalls, VPNs, access control)",
+      "Practice with home-lab projects (set up servers, networks, VMs)",
+      "Apply for IT support, helpdesk, or junior sysadmin roles"
+    ]
+  },
+  "Digital Marketing Specialist": {
+    "steps": [
+      "Learn digital marketing fundamentals and the marketing funnel",
+      "Learn SEO (search engine optimization) basics",
+      "Learn social media marketing and content strategy",
+      "Learn email marketing tools (Mailchimp, Constant Contact)",
+      "Learn analytics tools (Google Analytics) to measure campaigns",
+      "Learn e-commerce basics and platforms (Shopify)",
+      "Build a portfolio with sample campaigns, personas, and a content calendar",
+      "Apply for junior digital marketing or e-commerce roles"
+    ]
+  },
+  "Technical Writer": {
+    "steps": [
+      "Learn the fundamentals of technical writing (clarity, audience, structure)",
+      "Learn to write different document types (user manuals, API docs, guides)",
+      "Learn Markdown and basic documentation tools",
+      "Learn to use Git/GitHub for version-controlled documentation",
+      "Learn accessibility and localization basics for documentation",
+      "Study a style guide (e.g. Google Developer Style Guide)",
+      "Build a portfolio with 2-3 sample docs (a how-to guide, API reference, README)",
+      "Apply for junior technical writer or documentation roles"
+    ]
   }
 }
