@@ -10,6 +10,9 @@ import os
 import io
 import json
 import math
+from django.utils import timezone
+from django.db.models import Count
+from django.db.models.functions import TruncMonth
 import PyPDF2
 import markdown
 from bs4 import BeautifulSoup
@@ -138,7 +141,9 @@ def render_home(request, fresh_load=False, **extra_context):
         # results from a waypoint nobody touched this visit.
         for key in (
             "last_answer", "last_asked_question", "last_roadmap", "last_courses",
-            "last_resume_feedback", "last_skill_gap_feedback", "last_skill_gap_role",
+            "last_resume_feedback", "last_resume_text", "last_resume_feedback_raw",
+            "last_refined_resume",
+            "last_skill_gap_feedback", "last_skill_gap_role",
             "last_interview_feedback",
         ):
             session.pop(key, None)
@@ -149,6 +154,9 @@ def render_home(request, fresh_load=False, **extra_context):
             "roadmap": None,
             "courses": None,
             "resume_feedback": None,
+            "resume_text": None,
+            "resume_feedback_raw": None,
+            "refined_resume": None,
             "interview_question": None,
             "interview_feedback": None,
             "interview_role": None,
@@ -168,6 +176,9 @@ def render_home(request, fresh_load=False, **extra_context):
             "roadmap": session.get("last_roadmap"),
             "courses": session.get("last_courses"),
             "resume_feedback": session.get("last_resume_feedback"),
+            "resume_text": session.get("last_resume_text"),
+            "resume_feedback_raw": session.get("last_resume_feedback_raw"),
+            "refined_resume": session.get("last_refined_resume"),
             "interview_question": None,
             "interview_feedback": session.get("last_interview_feedback"),
             "interview_role": None,
@@ -189,6 +200,12 @@ def render_home(request, fresh_load=False, **extra_context):
         session["last_courses"] = extra_context.get("courses")
     if "resume_feedback" in extra_context:
         session["last_resume_feedback"] = extra_context.get("resume_feedback")
+    if "resume_text" in extra_context:
+        session["last_resume_text"] = extra_context.get("resume_text")
+    if "resume_feedback_raw" in extra_context:
+        session["last_resume_feedback_raw"] = extra_context.get("resume_feedback_raw")
+    if "refined_resume" in extra_context:
+        session["last_refined_resume"] = extra_context.get("refined_resume")
     if "skill_gap_feedback" in extra_context:
         session["last_skill_gap_feedback"] = extra_context.get("skill_gap_feedback")
         session["last_skill_gap_role"] = extra_context.get("skill_gap_role")
@@ -284,6 +301,31 @@ def history(request):
         for i, (skill, count) in enumerate(top_skills)
     ]
 
+    # ---------- Activity over time: monthly trend across all 4 features ----------
+    # Complements the donut chart (which shows *what* you've done) by showing
+    # *when* you were active, so patterns over time are visible too.
+    monthly_counts = {}
+    for qs in (
+        ChatQuestion.objects.filter(user=request.user),
+        ResumeReport.objects.filter(user=request.user),
+        skill_gap_reports_qs,
+        InterviewReport.objects.filter(user=request.user),
+    ):
+        for row in qs.annotate(month=TruncMonth("created_at")).values("month").annotate(count=Count("id")):
+            key = row["month"]
+            monthly_counts[key] = monthly_counts.get(key, 0) + row["count"]
+
+    sorted_months = sorted(monthly_counts.items())[-6:]  # last 6 active months
+    max_month_count = max([count for _, count in sorted_months], default=1)
+    monthly_trend = [
+        {
+            "label": month.strftime("%b %Y"),
+            "count": count,
+            "percent": int(count / max_month_count * 100),
+        }
+        for month, count in sorted_months
+    ]
+
     return render(request, "chatbot/history.html", {
         "chat_questions": request.user.chat_questions.all()[:20],
         "resume_reports": request.user.resume_reports.all()[:20],
@@ -294,6 +336,7 @@ def history(request):
         "donut_radius": donut_radius,
         "donut_circumference": donut_circumference,
         "skill_trend_rows": skill_trend_rows,
+        "monthly_trend": monthly_trend,
     })
 
 
@@ -381,7 +424,89 @@ def analyze_resume(request):
         feedback_html=resume_feedback,
     )
 
-    return render_home(request, resume_feedback=resume_feedback, active_waypoint="waypoint-02")
+    return render_home(
+        request,
+        resume_feedback=resume_feedback,
+        resume_text=resume_text,
+        resume_feedback_raw=raw_feedback,
+        refined_resume=None,
+        active_waypoint="waypoint-02",
+    )
+
+
+@login_required
+@require_POST
+def refine_resume(request):
+    """POST /resume/refine/ — takes the (possibly user-edited) resume text
+    plus the earlier AI feedback, and asks the AI to rewrite the resume
+    incorporating those suggestions. Nothing here is invented — the AI is
+    told explicitly not to add facts, employers, or achievements that
+    weren't already in the resume."""
+    resume_text = request.POST.get("resume_text", "").strip()
+    feedback_text = request.POST.get("feedback_text", "").strip()
+
+    if not resume_text:
+        return render_home(request, resume_error="There's no resume text to refine — analyze a resume first.", active_waypoint="waypoint-02")
+
+    system_prompt = (
+        "You are a professional resume editor. You will be given a resume's "
+        "plain text and a list of improvement suggestions for it. Rewrite "
+        "the resume incorporating those suggestions as directly as "
+        "possible: strengthen weak bullet points, tighten wording, add "
+        "clearly-labelled placeholder sections only where the suggestions "
+        "call for a genuinely missing section (e.g. write \"[Add relevant "
+        "certifications here]\" rather than inventing ones). Never invent "
+        "facts, employers, dates, metrics, or achievements that were not "
+        "already present in the original text. Preserve the original "
+        "section order where reasonable. Reply with ONLY the revised "
+        "resume's plain text — no commentary, no markdown symbols, no "
+        "introductory line like \"Here is the revised resume\"."
+    )
+    user_content = f"ORIGINAL RESUME:\n{resume_text}\n\nSUGGESTIONS TO APPLY:\n{feedback_text}"
+
+    raw_refined = get_ai_response(system_prompt, user_content)
+
+    if raw_refined is None:
+        return render_home(
+            request,
+            resume_error="Couldn't reach the AI just now — please try again in a moment.",
+            resume_text=resume_text,
+            resume_feedback_raw=feedback_text,
+            active_waypoint="waypoint-02",
+        )
+
+    return render_home(
+        request,
+        resume_text=resume_text,
+        resume_feedback_raw=feedback_text,
+        refined_resume=raw_refined.strip(),
+        active_waypoint="waypoint-02",
+    )
+
+
+@login_required
+@require_POST
+def download_refined_resume_pdf(request):
+    """POST /resume/refine/pdf/ — exports whatever is currently in the
+    refined-resume textarea (including the user's own edits) as a PDF."""
+    refined_text = request.POST.get("refined_resume", "").strip()
+
+    if not refined_text:
+        return render_home(request, resume_error="There's no refined resume to download yet.", active_waypoint="waypoint-02")
+
+    # Plain text -> simple HTML paragraphs, so it goes through the same
+    # PDF pipeline as every other report.
+    paragraphs = [p.strip() for p in refined_text.split("\n\n") if p.strip()]
+    html_body = "".join(
+        f"<p>{p.replace(chr(10), '<br/>')}</p>" for p in paragraphs
+    )
+
+    return _build_pdf_response(
+        "refined-resume.pdf",
+        "Refined Resume",
+        f"Generated {timezone.now().strftime('%d %b %Y, %H:%M')}",
+        html_body,
+    )
 
 
 @login_required
