@@ -10,7 +10,6 @@
 <meta property="og:description" content="Ask questions, get a roadmap, check your resume, close your skill gaps, and practice interviews — one trail, every waypoint you need.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://yasmeenmh.pythonanywhere.com">
-<meta property="og:url" content="https://yasmeenmh.pythonanywhere.com">
 <meta name="theme-color" content="#F6F3EA" id="theme-color-meta">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -30,18 +29,6 @@
     navigation: auto;
 }
 
-.skeleton-line {
-    height: 14px;
-    border-radius: 4px;
-    background: linear-gradient(90deg, var(--bg) 25%, var(--line) 50%, var(--bg) 75%);
-    background-size: 200% 100%;
-    animation: skeleton-shimmer 1.4s ease-in-out infinite;
-    margin-bottom: 0.6rem;
-}
-@keyframes skeleton-shimmer {
-    0% { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
-}
     :root {
         --bg: #F6F3EA;
         --surface: #FFFFFF;
@@ -59,14 +46,6 @@
         --font-display: 'Fraunces', serif;
         --font-body: 'Inter', sans-serif;
         --font-mono: 'IBM Plex Mono', monospace;
-
-        --space-1: 4px;
-    --space-2: 8px;
-    --space-3: 12px;
-    --space-4: 16px;
-    --space-5: 24px;
-    --space-6: 32px;
-    --space-7: 48px;
     }
 
     [data-theme="dark"] {
@@ -85,15 +64,9 @@
     }
 
     html { scroll-behavior: smooth; }
-
     body { transition: background 200ms ease, color 200ms ease; }
-    body {
-    animation: page-fade-in 200ms ease;
-}
-@keyframes page-fade-in {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
+    body { animation: page-fade-in 200ms ease; }
+    @keyframes page-fade-in { from { opacity: 0; } to { opacity: 1; } }
 
     * { box-sizing: border-box; }
 
@@ -107,891 +80,305 @@
     }
 
     a { color: var(--pine); }
-
     ::selection { background: var(--blaze); color: #fff; }
     ::-webkit-scrollbar { width: 10px; height: 10px; }
-::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: var(--line); border-radius: 999px; border: 2px solid var(--bg); }
-::-webkit-scrollbar-thumb:hover { background: var(--moss); }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--line); border-radius: 999px; border: 2px solid var(--bg); }
+    ::-webkit-scrollbar-thumb:hover { background: var(--moss); }
 
-    .topbar {
-        max-width: 760px;
-        margin: 0 auto;
-        padding: 1.5rem 1.5rem 0;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        font-family: var(--font-mono);
-        font-size: 0.8rem;
-        color: var(--ink-soft);
+    /* ---------- Navbar ---------- */
+    .tabnav {
+        display: flex; align-items: center; justify-content: space-between;
+        max-width: 1100px; margin: 0 auto; padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid var(--line);
+    }
+    .tabnav.is-scrolled {
+        position: sticky; top: 0; z-index: 90;
+        background: color-mix(in srgb, var(--surface) 90%, transparent);
+        backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    }
+    .tabnav-brand {
+        display: flex; align-items: center; gap: 0.5rem;
+        font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; color: var(--pine);
+    }
+    .tabnav-tabs { display: flex; gap: 1.75rem; }
+    .tabnav-tab {
+        background: none; border: none; cursor: pointer;
+        font-family: var(--font-body); font-weight: 600; font-size: 0.9rem;
+        color: var(--ink-soft); padding: 0.3rem 0; text-decoration: none;
+        border-bottom: 2px solid transparent; transition: color 150ms ease, border-color 150ms ease;
+    }
+    .tabnav-tab.is-active, .tabnav-tab:hover { color: var(--pine); border-color: var(--blaze); }
+    .tabnav-user { display: flex; align-items: center; gap: 1rem; font-family: var(--font-mono); font-size: 0.8rem; color: var(--ink-soft); }
+    .tabnav-user button, .tabnav-user .theme-toggle {
+        background: none; border: 1px solid var(--line); color: var(--ink-soft);
+        padding: 0.4rem 0.9rem; border-radius: 8px; font-family: var(--font-mono);
+        font-size: 0.78rem; cursor: pointer;
     }
 
-    .topbar.is-scrolled {
-    position: sticky; top: 0; z-index: 90;
-    background: color-mix(in srgb, var(--surface) 90%, transparent);
-    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-    border-bottom: 1px solid var(--line);
-}
-
-    .topbar a {
-        color: var(--pine);
-        text-decoration: none;
-        font-weight: 600;
-        margin-left: 1rem;
-    }
-
-    .topbar a:hover { text-decoration: underline; }
-
-    .logout-form {
-        display: inline;
-        margin-left: 1rem;
-    }
-
-    .logout-link {
-        background: none;
-        border: none;
-        padding: 0;
-        color: var(--pine);
-        text-decoration: none;
-        font-weight: 600;
-        font-family: var(--font-mono);
-        font-size: 0.8rem;
-        cursor: pointer;
-    }
-
-    .logout-link:hover { text-decoration: underline; }
+    .tab-panel { display: none; max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem 5rem; }
+    .tab-panel.is-active { display: block; }
+    .tab-panel--narrow { max-width: 760px; }
+    .tab-panel-header { margin-bottom: 1.5rem; }
+    .tab-panel-header h1 { font-family: var(--font-display); font-size: 1.8rem; color: var(--pine); margin: 0 0 0.4rem; }
+    .tab-panel-header p { color: var(--ink-soft); margin: 0; }
 
     .theme-toggle {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 30px;
-        height: 30px;
-        margin-left: 1rem;
-        border-radius: 8px;
-        border: 1px solid var(--line);
-        background: transparent;
-        color: var(--moss);
-        cursor: pointer;
-        vertical-align: middle;
+        display: inline-flex; align-items: center; justify-content: center;
+        width: 30px; height: 30px; padding: 0 !important; border-radius: 8px;
         transition: border-color 150ms ease, color 150ms ease, background 150ms ease;
     }
-
-    .theme-toggle:hover {
-        border-color: var(--blaze);
-        color: var(--blaze);
-        background: var(--bg);
-    }
-
+    .theme-toggle:hover { border-color: var(--blaze); color: var(--blaze); background: var(--bg); }
     .theme-toggle svg { width: 16px; height: 16px; }
 
-    .hero {
-        max-width: 760px;
-        margin: 0 auto;
-        padding: 2rem 1.5rem 3rem;
-        text-align: left;
+    /* ---------- Dashboard landing panel ---------- */
+    .dash-hero { padding: 1rem 0 2.5rem; }
+    .dash-hero h1 {
+        font-family: var(--font-display); font-weight: 700;
+        font-size: clamp(1.9rem, 4vw, 2.6rem); line-height: 1.1;
+        color: var(--pine); margin: 0 0 0.75rem;
     }
+    .dash-hero p { font-size: 1.05rem; color: var(--ink-soft); max-width: 52ch; margin: 0; }
 
-    .eyebrow {
-        font-family: var(--font-mono);
-        font-size: 0.72rem;
-        letter-spacing: 0.18em;
-        text-transform: uppercase;
-        color: var(--blaze);
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        margin-bottom: 1rem;
-    }
+    .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    @media (max-width: 720px) { .dash-grid { grid-template-columns: 1fr; } }
 
-    .eyebrow::before {
-        content: "";
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background: var(--blaze);
+    .dash-card {
+        background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+        padding: 1.75rem; box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04);
+        display: flex; flex-direction: column; transition: transform 150ms ease, box-shadow 150ms ease;
     }
-
-    .hero h1 {
-        font-family: var(--font-display);
-        font-weight: 700;
-        font-size: clamp(2.1rem, 4.5vw, 3rem);
-        line-height: 1.08;
-        margin: 0 0 1rem;
-        color: var(--pine);
+    .dash-card:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.08), 0 8px 20px rgba(0,0,0,0.06); }
+    .dash-card-icon {
+        width: 40px; height: 40px; border-radius: 10px; color: var(--blaze);
+        display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;
     }
-
-    .hero p {
-        font-size: 1.05rem;
-        color: var(--ink-soft);
-        max-width: 46ch;
-        margin: 0;
+    .dash-card-icon svg { width: 24px; height: 24px; }
+    .dash-card h2 { font-family: var(--font-display); font-size: 1.25rem; color: var(--pine); margin: 0 0 0.5rem; }
+    .dash-card p { color: var(--ink-soft); font-size: 0.92rem; margin: 0 0 1.25rem; flex: 1; }
+    .dash-card-btn {
+        align-self: flex-start; background: none; border: 1px solid var(--line); color: var(--ink);
+        font-family: var(--font-body); font-weight: 600; font-size: 0.88rem;
+        padding: 0.6rem 1.1rem; border-radius: 8px; cursor: pointer;
+        display: inline-flex; align-items: center; gap: 0.4rem;
+        transition: border-color 150ms ease, background 150ms ease;
     }
+    .dash-card-btn:hover { border-color: var(--blaze); background: var(--bg); }
 
     .progress-ring-wrap {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        margin-top: 1.75rem;
-        padding-top: 1.5rem;
-        border-top: 1px dashed var(--line);
-    }
-
-    .progress-ring {
-        width: 60px;
-        height: 60px;
-        transform: rotate(-90deg);
-        flex-shrink: 0;
-    }
-
-    .progress-ring-bg {
-        fill: none;
-        stroke: var(--line);
-        stroke-width: 8;
-    }
-
-    .progress-ring-fill {
-        fill: none;
-        stroke: var(--blaze);
-        stroke-width: 8;
-        stroke-linecap: round;
-        transition: stroke-dashoffset 0.8s ease;
-    }
-
-    .progress-ring-text {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .progress-ring-percent {
-        font-family: var(--font-display);
-        font-weight: 700;
-        font-size: 1.25rem;
-        color: var(--pine);
-        line-height: 1.1;
-    }
-
-    .progress-ring-sub {
-        font-family: var(--font-mono);
-        font-size: 0.7rem;
-        letter-spacing: 0.04em;
-        text-transform: uppercase;
-        color: var(--moss);
-        margin-top: 0.2rem;
-    }
-
-    /* ---------- Quick nav: jump to a waypoint ---------- */
-    .quick-nav {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        margin-top: 1.25rem;
-    }
-
-    .quick-nav a {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.4rem;
-        font-family: var(--font-mono);
-        font-size: 0.72rem;
-        text-decoration: none;
-        color: var(--ink-soft);
-        background: var(--surface);
-        border: 1px solid var(--line);
-        border-radius: 999px;
-        padding: 0.35rem 0.8rem 0.35rem 0.55rem;
-        transition: border-color 150ms ease, color 150ms ease;
-    }
-
-    .quick-nav a:hover { border-color: var(--blaze); color: var(--blaze); }
-
-    .quick-nav-num {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 1.1rem;
-        height: 1.1rem;
-        border-radius: 50%;
-        background: var(--bg);
-        font-size: 0.62rem;
-        color: var(--moss);
-    }
-
-    .quick-nav a.is-done .quick-nav-num { background: var(--pine); color: #fff; }
-
-.quick-nav.is-pinned {
-    position: fixed; top: 4.5rem; left: 50%; transform: translateX(-50%);
-    background: color-mix(in srgb, var(--surface) 92%, transparent);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    padding: 0.6rem 1rem; border-radius: 999px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.12); z-index: 100;
+    display: flex; align-items: center; gap: 1rem;
+    margin-top: 1.5rem; margin-bottom: 2.5rem;
+    padding-top: 1.5rem; padding-bottom: 1.5rem;
+    border-top: 1px dashed var(--line);
+    border-bottom: 1px dashed var(--line);
 }
-
-    .trail {
-        max-width: 760px;
-        margin: 0 auto;
-        padding: 0 1.5rem 5rem;
-        position: relative;
-    }
-
-    .trail::before {
-        content: "";
-        position: absolute;
-        top: 1.4rem;
-        bottom: 3rem;
-        left: 1.5rem;
-        width: 2px;
-        background-image: linear-gradient(var(--moss) 60%, transparent 0%);
-        background-position: left;
-        background-size: 2px 12px;
-        background-repeat: repeat-y;
-        opacity: 0.55;
-    }
-
-    .waypoint {
-        position: relative;
-        padding-left: 3.75rem;
-        margin-bottom: 2.75rem;
-        animation: rise 0.5s ease both;
-    }
-
-    .waypoint:last-child { margin-bottom: 0; }
-
-    .waypoint:nth-child(1) { animation-delay: 0ms; }
-    .waypoint:nth-child(2) { animation-delay: 80ms; }
-    .waypoint:nth-child(3) { animation-delay: 160ms; }
-    .waypoint:nth-child(4) { animation-delay: 240ms; }
-
-
+    .progress-ring { width: 60px; height: 60px; transform: rotate(-90deg); flex-shrink: 0; }
+    .progress-ring-bg { fill: none; stroke: var(--line); stroke-width: 8; }
+    .progress-ring-fill { fill: none; stroke: var(--blaze); stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset 0.8s ease; }
     .progress-ring-fill.is-complete { stroke: var(--pine); }
-.progress-ring-wrap.is-complete .progress-ring-percent::after { content: " 🎉"; }
-
-    .marker {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 3rem;
-        height: 3rem;
-        border-radius: 50%;
-        background: var(--surface);
-        border: 2px solid var(--moss);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-family: var(--font-mono);
-        font-size: 0.95rem;
-        color: var(--moss);
-        z-index: 1;
-        transition: all 0.3s ease;
-    }
-
-    .waypoint--reached .marker {
-        background: var(--pine);
-        border-color: var(--pine);
-        color: #fff;
-    }
-
-    .waypoint-head {
-        display: flex;
-        align-items: baseline;
-        justify-content: space-between;
-        gap: 1rem;
-        flex-wrap: wrap;
-        margin-bottom: 1rem;
-        padding-top: 0.55rem;
-    }
-
-    .waypoint-head h2 {
-        font-family: var(--font-display);
-        font-weight: 600;
-        font-size: 1.4rem;
-        margin: 0;
-        color: var(--pine);
-    }
-
-    .waypoint-label {
-        font-family: var(--font-mono);
-        font-size: 0.7rem;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        color: var(--moss);
-    }
+    .progress-ring-wrap.is-complete .progress-ring-percent::after { content: " 🎉"; }
+    .progress-ring-text { display: flex; flex-direction: column; }
+    .progress-ring-percent { font-family: var(--font-display); font-weight: 700; font-size: 1.25rem; color: var(--pine); line-height: 1.1; }
+    .progress-ring-sub { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--moss); margin-top: 0.2rem; }
 
     .card {
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    padding: 1.5rem;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04);
-}
-
+        background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+        padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04);
+    }
     .card + .card { margin-top: 1rem; }
 
-    /* ---------- Error banner ---------- */
     .error-banner {
-        display: flex;
-        align-items: flex-start;
-        gap: 0.6rem;
-        background: rgba(193, 72, 58, 0.08);
-        border: 1px solid var(--alert);
-        border-radius: 10px;
-        color: var(--alert);
-        padding: 0.75rem 1rem;
-        font-size: 0.88rem;
-        margin-bottom: 1rem;
+        display: flex; align-items: flex-start; gap: 0.6rem;
+        background: rgba(193, 72, 58, 0.08); border: 1px solid var(--alert); border-radius: 10px;
+        color: var(--alert); padding: 0.75rem 1rem; font-size: 0.88rem; margin-bottom: 1rem;
     }
-
     .error-banner-icon { flex-shrink: 0; line-height: 1.3; }
 
-.page-loader {
-    position: fixed; top: 0; left: 0; height: 3px; width: 0%;
-    background: var(--blaze); z-index: 9999;
-    transition: width 400ms ease, opacity 300ms ease;
-}
+    .page-loader {
+        position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+        background: var(--blaze); z-index: 9999; transition: width 400ms ease, opacity 300ms ease;
+    }
+    .skip-link {
+        position: absolute; top: -40px; left: 0; background: var(--blaze); color: #fff;
+        padding: 0.6rem 1rem; z-index: 10000; transition: top 150ms ease;
+    }
+    .skip-link:focus { top: 0; }
 
-.skip-link {
-    position: absolute; top: -40px; left: 0; background: var(--blaze); color: #fff;
-    padding: 0.6rem 1rem; z-index: 10000; transition: top 150ms ease;
-}
-.skip-link:focus { top: 0; }
-
-    /* ---------- Loading state (shown while a form submits) ---------- */
     button .btn-label { display: inline-flex; align-items: center; gap: 0.5rem; }
     button .btn-spinner {
-        display: none;
-        width: 13px;
-        height: 13px;
-        border: 2px solid rgba(255,255,255,0.4);
-        border-top-color: #fff;
-        border-radius: 50%;
-        animation: spin 700ms linear infinite;
+        display: none; width: 13px; height: 13px; border: 2px solid rgba(255,255,255,0.4);
+        border-top-color: #fff; border-radius: 50%; animation: spin 700ms linear infinite;
     }
     button.secondary .btn-spinner { border-color: rgba(47,75,60,0.25); border-top-color: var(--pine); }
     button.is-loading .btn-spinner { display: inline-block; }
     button.is-loading { opacity: 0.85; cursor: progress; }
-
     @keyframes spin { to { transform: rotate(360deg); } }
+    @media (prefers-reduced-motion: reduce) { .btn-spinner { animation: none; } }
 
-    @media (prefers-reduced-motion: reduce) {
-        .btn-spinner { animation: none; }
+    .field-row { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+    input[type="text"], textarea, select {
+        font-family: var(--font-body); font-size: 0.95rem; color: var(--ink);
+        background: var(--bg); border: 1px solid var(--line); border-radius: 10px;
+        padding: 0.75rem 1rem; flex: 1; min-width: 200px;
+        transition: border-color 150ms ease;
     }
-
-    .field-row {
-        display: flex;
-        gap: 0.6rem;
-        flex-wrap: wrap;
-    }
-
-    input[type="text"],
-    textarea,
-    select {
-        font-family: var(--font-body);
-        font-size: 0.95rem;
-        color: var(--ink);
-        background: var(--bg);
-        border: 1px solid var(--line);
-        border-radius: 10px;
-        padding: 0.75rem 1rem;
-        flex: 1;
-        min-width: 200px;
-    }
-
     textarea { width: 100%; resize: vertical; font-family: var(--font-body); }
+    .resume-textarea { font-family: var(--font-mono); font-size: 0.82rem; line-height: 1.55; }
 
-    .resume-textarea {
-        font-family: var(--font-mono);
-        font-size: 0.82rem;
-        line-height: 1.55;
+    input[type="text"]:focus, textarea:focus, select:focus, button:focus-visible, input[type="file"]:focus-visible {
+        outline: 2px solid var(--focus); outline-offset: 2px;
     }
-
-    input[type="text"]:focus,
-    textarea:focus,
-    select:focus,
-    button:focus-visible,
-    input[type="file"]:focus-visible {
-        outline: 2px solid var(--focus);
-        outline-offset: 2px;
-    }
-
-input[type="text"], textarea, select {
-    transition: border-color 150ms ease;
-}
-
-    input[type="file"] {
-        font-family: var(--font-body);
-        font-size: 0.9rem;
-    }
+    input[type="file"] { font-family: var(--font-body); font-size: 0.9rem; }
 
     .dropzone {
-        position: relative;
-        border: 2px dashed var(--line);
-        border-radius: 14px;
-        padding: 2.25rem 1.5rem;
-        text-align: center;
-        cursor: pointer;
+        position: relative; border: 2px dashed var(--line); border-radius: 14px;
+        padding: 2.25rem 1.5rem; text-align: center; cursor: pointer;
         transition: border-color 200ms ease, background 200ms ease;
     }
-
-    .dropzone:hover,
-    .dropzone:focus-visible {
-        border-color: var(--blaze);
-        outline: none;
-    }
-
-    .dropzone.drag-over {
-        border-color: var(--focus);
-        background: var(--bg);
-    }
-
-    .dropzone-icon {
-        color: var(--blaze);
-        margin: 0 auto 0.75rem;
-        display: block;
-    }
-
-    .dropzone-check {
-        display: none;
-        margin: 0 auto 0.75rem;
-        color: var(--pine);
-    }
-
+    .dropzone:hover, .dropzone:focus-visible { border-color: var(--blaze); outline: none; }
+    .dropzone.drag-over { border-color: var(--focus); background: var(--bg); }
+    .dropzone-icon { color: var(--blaze); margin: 0 auto 0.75rem; display: block; }
+    .dropzone-check { display: none; margin: 0 auto 0.75rem; color: var(--pine); }
     .dropzone-check circle { fill: none; stroke: currentColor; stroke-width: 2; }
     .dropzone-check path {
-        fill: none;
-        stroke: currentColor;
-        stroke-width: 2.5;
-        stroke-linecap: round;
-        stroke-linejoin: round;
-        stroke-dasharray: 30;
-        stroke-dashoffset: 30;
+        fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;
+        stroke-dasharray: 30; stroke-dashoffset: 30;
     }
-
-    .dropzone.has-file .dropzone-check {
-        display: block;
-        animation: draw-check 300ms ease forwards;
-    }
-
+    .dropzone.has-file .dropzone-check { display: block; animation: draw-check 300ms ease forwards; }
     .dropzone.has-file .dropzone-icon { display: none; }
-
-    @keyframes draw-check {
-        to { stroke-dashoffset: 0; }
-    }
-
-    .dropzone-label {
-        color: var(--ink-soft);
-        font-size: 0.9rem;
-        margin: 0;
-    }
-
+    @keyframes draw-check { to { stroke-dashoffset: 0; } }
+    .dropzone-label { color: var(--ink-soft); font-size: 0.9rem; margin: 0; }
     .dropzone-label strong { color: var(--blaze); font-weight: 600; }
-
-    .dropzone-hint {
-        color: var(--moss);
-        font-size: 0.78rem;
-        margin: 0.3rem 0 0;
-    }
-
-    .dropzone-filename {
-        margin: 0.6rem 0 0;
-        font-family: var(--font-mono);
-        font-size: 0.8rem;
-        color: var(--pine);
-        word-break: break-all;
-    }
-
+    .dropzone-hint { color: var(--moss); font-size: 0.78rem; margin: 0.3rem 0 0; }
+    .dropzone-filename { margin: 0.6rem 0 0; font-family: var(--font-mono); font-size: 0.8rem; color: var(--pine); word-break: break-all; }
     .dropzone-input { display: none; }
 
     button {
-        font-family: var(--font-body);
-        font-weight: 600;
-        font-size: 0.92rem;
-        background: var(--blaze);
-        color: #fff;
-        border: none;
-        border-radius: 10px;
-        padding: 0.75rem 1.4rem;
-        cursor: pointer;
-        transition: background 0.15s ease, transform 0.1s ease;
-        white-space: nowrap;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
+        font-family: var(--font-body); font-weight: 600; font-size: 0.92rem;
+        background: var(--blaze); color: #fff; border: none; border-radius: 10px;
+        padding: 0.75rem 1.4rem; cursor: pointer;
+        transition: background 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+        white-space: nowrap; display: inline-flex; align-items: center; gap: 0.5rem;
     }
-
-    button {
-    transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
-    }
-    button:hover:not(:disabled) {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 10px rgba(226, 99, 42, 0.25);
-    }
+    button:hover:not(:disabled) { background: var(--blaze-dark); transform: translateY(-1px); box-shadow: 0 4px 10px rgba(226, 99, 42, 0.25); }
     button:active { transform: translateY(1px); }
-
-    button.secondary {
-        background: transparent;
-        color: var(--pine);
-        border: 1px solid var(--pine);
-    }
-
+    button.secondary { background: transparent; color: var(--pine); border: 1px solid var(--pine); }
     button.secondary:hover { background: var(--pine); color: #fff; }
 
-    .answer-block {
-        margin-top: 1rem;
-        padding-top: 1rem;
-        border-top: 1px dashed var(--line);
-    }
-
-    .asked-question {
-        font-size: 0.85rem;
-        color: var(--ink-soft);
-        margin: 0 0 0.9rem;
-    }
+    .answer-block { margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed var(--line); }
+    .asked-question { font-size: 0.85rem; color: var(--ink-soft); margin: 0 0 0.9rem; }
     .asked-question em { color: var(--pine); font-style: normal; font-weight: 600; }
-
     .answer-label {
-        font-family: var(--font-mono);
-        font-size: 0.7rem;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: var(--blaze);
-        margin-bottom: 0.5rem;
-        display: block;
+        font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.08em;
+        text-transform: uppercase; color: var(--blaze); margin-bottom: 0.5rem; display: block;
     }
 
-    /* ---------- Collapsible long answers ---------- */
-    .answer-block-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 0.75rem;
-        margin-bottom: 0.5rem;
-    }
+    .answer-block-header { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; margin-bottom: 0.5rem; }
     .answer-block-header .answer-label { margin-bottom: 0; }
-
     .collapse-toggle {
-        background: var(--bg);
-        border: 1px solid var(--line);
-        border-radius: 999px;
-        width: 26px;
-        height: 26px;
-        flex-shrink: 0;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        color: var(--moss);
-        padding: 0;
+        background: var(--bg); border: 1px solid var(--line); border-radius: 999px;
+        width: 26px; height: 26px; flex-shrink: 0; display: inline-flex; align-items: center;
+        justify-content: center; cursor: pointer; color: var(--moss); padding: 0;
     }
     .collapse-toggle:hover { border-color: var(--blaze); color: var(--blaze); }
     .collapse-toggle svg { width: 13px; height: 13px; transition: transform 200ms ease; }
     .collapse-toggle[aria-expanded="false"] svg { transform: rotate(180deg); }
-
-    .collapsible-content {
-        overflow: hidden;
-        max-height: 4000px;
-        transition: max-height 350ms ease;
-        position: relative;
-    }
-    .collapsible-content[data-collapsed="true"] {
-        max-height: 150px;
-    }
+    .collapsible-content { overflow: hidden; max-height: 4000px; transition: max-height 350ms ease; position: relative; }
+    .collapsible-content[data-collapsed="true"] { max-height: 150px; }
     .collapsible-content[data-collapsed="true"]::after {
-        content: "";
-        position: absolute;
-        left: 0; right: 0; bottom: 0;
-        height: 56px;
-        background: linear-gradient(to bottom, transparent, var(--surface));
-        pointer-events: none;
+        content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 56px;
+        background: linear-gradient(to bottom, transparent, var(--surface)); pointer-events: none;
     }
+    .field-note { font-family: var(--font-mono); font-size: 0.72rem; color: var(--moss); margin: 0.6rem 0 0; }
 
-    .field-note {
-        font-family: var(--font-mono);
-        font-size: 0.72rem;
-        color: var(--moss);
-        margin: 0.6rem 0 0;
-    }
-
-    /* ---------- Rendered AI markdown content ---------- */
-    .ai-content {
-        color: var(--ink);
-        font-size: 0.96rem;
-    }
-
+    .ai-content { color: var(--ink); font-size: 0.96rem; }
     .ai-content > *:first-child { margin-top: 0; }
     .ai-content > *:last-child { margin-bottom: 0; }
-
-    .ai-content p {
-        margin: 0 0 0.85rem;
+    .ai-content p { margin: 0 0 0.85rem; }
+    .ai-content h1, .ai-content h2, .ai-content h3, .ai-content h4 {
+        font-family: var(--font-display); font-weight: 600; color: var(--pine); margin: 1.3rem 0 0.6rem; line-height: 1.3;
     }
-
-    .ai-content h1,
-    .ai-content h2,
-    .ai-content h3,
-    .ai-content h4 {
-        font-family: var(--font-display);
-        font-weight: 600;
-        color: var(--pine);
-        margin: 1.3rem 0 0.6rem;
-        line-height: 1.3;
-    }
-
     .ai-content h1 { font-size: 1.25rem; }
     .ai-content h2 { font-size: 1.15rem; }
     .ai-content h3 { font-size: 1.05rem; }
-    .ai-content h4 {
-        font-size: 0.95rem;
-        font-family: var(--font-body);
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
-        color: var(--blaze);
-    }
-
-    .ai-content strong {
-        color: var(--pine);
-        font-weight: 600;
-    }
-
-    .ai-content ul,
-    .ai-content ol {
-        margin: 0 0 0.9rem;
-        padding-left: 1.3rem;
-    }
-
-    .ai-content li {
-        margin-bottom: 0.4rem;
-        padding-left: 0.2rem;
-    }
-
+    .ai-content h4 { font-size: 0.95rem; font-family: var(--font-body); text-transform: uppercase; letter-spacing: 0.04em; color: var(--blaze); }
+    .ai-content strong { color: var(--pine); font-weight: 600; }
+    .ai-content ul, .ai-content ol { margin: 0 0 0.9rem; padding-left: 1.3rem; }
+    .ai-content li { margin-bottom: 0.4rem; padding-left: 0.2rem; }
     .ai-content ul { list-style: none; margin-left: 0; padding-left: 0; }
-
-    .ai-content ul li {
-        position: relative;
-        padding-left: 1.3rem;
-    }
-
+    .ai-content ul li { position: relative; padding-left: 1.3rem; }
     .ai-content ul li::before {
-        content: "";
-        position: absolute;
-        left: 0.15rem;
-        top: 0.55rem;
-        width: 6px;
-        height: 6px;
-        border-radius: 50%;
-        background: var(--blaze);
+        content: ""; position: absolute; left: 0.15rem; top: 0.55rem; width: 6px; height: 6px;
+        border-radius: 50%; background: var(--blaze);
     }
-
-    .ai-content ol {
-        counter-reset: ai-step;
-        list-style: none;
-        padding-left: 0;
-    }
-
-    .ai-content ol li {
-        counter-increment: ai-step;
-        position: relative;
-        padding-left: 2rem;
-    }
-
+    .ai-content ol { counter-reset: ai-step; list-style: none; padding-left: 0; }
+    .ai-content ol li { counter-increment: ai-step; position: relative; padding-left: 2rem; }
     .ai-content ol li::before {
-        content: counter(ai-step);
-        position: absolute;
-        left: 0;
-        top: 0.05rem;
-        width: 1.4rem;
-        height: 1.4rem;
-        border-radius: 50%;
-        background: var(--bg);
-        border: 1px solid var(--moss);
-        color: var(--pine);
-        font-family: var(--font-mono);
-        font-size: 0.7rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        content: counter(ai-step); position: absolute; left: 0; top: 0.05rem; width: 1.4rem; height: 1.4rem;
+        border-radius: 50%; background: var(--bg); border: 1px solid var(--moss); color: var(--pine);
+        font-family: var(--font-mono); font-size: 0.7rem; display: flex; align-items: center; justify-content: center;
     }
-
     .ai-content code {
-        font-family: var(--font-mono);
-        font-size: 0.85em;
-        background: var(--bg);
-        border: 1px solid var(--line);
-        border-radius: 4px;
-        padding: 0.1rem 0.35rem;
+        font-family: var(--font-mono); font-size: 0.85em; background: var(--bg);
+        border: 1px solid var(--line); border-radius: 4px; padding: 0.1rem 0.35rem;
     }
+    .ai-content hr { border: none; border-top: 1px dashed var(--line); margin: 1.2rem 0; }
 
-    .ai-content hr {
-        border: none;
-        border-top: 1px dashed var(--line);
-        margin: 1.2rem 0;
-    }
-
-    .roadmap-progress {
-        margin: 0.9rem 0 1.3rem;
-    }
-
+    .roadmap-progress { margin: 0.9rem 0 1.3rem; }
     .roadmap-progress-label {
-        display: flex;
-        justify-content: space-between;
-        align-items: baseline;
-        font-family: var(--font-mono);
-        font-size: 0.7rem;
-        letter-spacing: 0.04em;
-        text-transform: uppercase;
-        color: var(--moss);
-        margin-bottom: 0.45rem;
+        display: flex; justify-content: space-between; align-items: baseline;
+        font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.04em;
+        text-transform: uppercase; color: var(--moss); margin-bottom: 0.45rem;
     }
+    .roadmap-progress-track { height: 6px; background: var(--bg); border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
+    .roadmap-progress-fill { height: 100%; background: var(--blaze); border-radius: 999px; width: 0%; animation: fill-bar 0.9s ease 0.1s forwards; }
+    @keyframes fill-bar { from { width: 0%; } to { width: 100%; } }
 
-    .roadmap-progress-track {
-        height: 6px;
-        background: var(--bg);
-        border: 1px solid var(--line);
-        border-radius: 999px;
-        overflow: hidden;
-    }
-
-    .roadmap-progress-fill {
-        height: 100%;
-        background: var(--blaze);
-        border-radius: 999px;
-        width: 0%;
-        animation: fill-bar 0.9s ease 0.1s forwards;
-    }
-
-    @keyframes fill-bar {
-        from { width: 0%; }
-        to { width: 100%; }
-    }
-
-    .roadmap-timeline {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-        counter-reset: step;
-        position: relative;
-    }
-
+    .roadmap-timeline { list-style: none; margin: 0; padding: 0; counter-reset: step; position: relative; }
     .roadmap-timeline::before {
-        content: "";
-        position: absolute;
-        left: 0.85rem;
-        top: 0.3rem;
-        bottom: 0.9rem;
-        width: 2px;
-        background: var(--moss);
-        opacity: 0.35;
-        clip-path: inset(0 0 100% 0);
+        content: ""; position: absolute; left: 0.85rem; top: 0.3rem; bottom: 0.9rem; width: 2px;
+        background: var(--moss); opacity: 0.35; clip-path: inset(0 0 100% 0);
         transition: clip-path 900ms cubic-bezier(0.65, 0, 0.35, 1);
     }
-
     .roadmap-timeline.is-visible::before { clip-path: inset(0 0 0% 0); }
-
     .roadmap-timeline li {
-        counter-increment: step;
-        position: relative;
-        padding: 0 0 1.15rem 2.6rem;
-        font-size: 0.95rem;
-        opacity: 0;
-        transform: translateY(6px);
-        transition: opacity 250ms ease, transform 250ms ease;
+        counter-increment: step; position: relative; padding: 0 0 1.15rem 2.6rem; font-size: 0.95rem;
+        opacity: 0; transform: translateY(6px); transition: opacity 250ms ease, transform 250ms ease;
     }
-
     .roadmap-timeline li.is-visible { opacity: 1; transform: translateY(0); }
-
     .roadmap-timeline li:last-child { padding-bottom: 0; }
-
     .roadmap-timeline li::before {
-        content: counter(step);
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 1.75rem;
-        height: 1.75rem;
-        border-radius: 50%;
-        background: var(--surface);
-        border: 2px solid var(--pine);
-        color: var(--pine);
-        font-family: var(--font-mono);
-        font-size: 0.75rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 1;
-        transform: scale(0.6);
-        transition: transform 250ms ease;
+        content: counter(step); position: absolute; left: 0; top: 0; width: 1.75rem; height: 1.75rem;
+        border-radius: 50%; background: var(--surface); border: 2px solid var(--pine); color: var(--pine);
+        font-family: var(--font-mono); font-size: 0.75rem; display: flex; align-items: center;
+        justify-content: center; z-index: 1; transform: scale(0.6); transition: transform 250ms ease;
     }
-
     .roadmap-timeline li.is-visible::before { transform: scale(1); }
-
     @media (prefers-reduced-motion: reduce) {
         .roadmap-timeline::before { transition: none; clip-path: inset(0 0 0% 0); }
-        .roadmap-timeline li,
-        .roadmap-timeline li::before { transition: none; opacity: 1; transform: none; }
+        .roadmap-timeline li, .roadmap-timeline li::before { transition: none; opacity: 1; transform: none; }
     }
 
-    .course-list {
-        list-style: none;
-        margin: 0.75rem 0 0;
-        padding: 0;
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-
-    .course-list li {
-        background: var(--bg);
-        border: 1px solid var(--line);
-        border-radius: 10px;
-        padding: 0.65rem 0.9rem;
-        font-size: 0.9rem;
-    }
-
+    .course-list { list-style: none; margin: 0.75rem 0 0; padding: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+    .course-list li { background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 0.65rem 0.9rem; font-size: 0.9rem; }
     .course-list a { font-weight: 600; text-decoration: none; }
     .course-list a:hover { text-decoration: underline; }
-
-    .platform-tag {
-        font-family: var(--font-mono);
-        font-size: 0.72rem;
-        color: var(--moss);
-    }
+    .platform-tag { font-family: var(--font-mono); font-size: 0.72rem; color: var(--moss); }
 
     .progress-tag {
-        font-family: var(--font-mono);
-        font-size: 0.75rem;
-        color: var(--blaze);
-        background: rgba(226, 99, 42, 0.1);
-        border: 1px solid rgba(226, 99, 42, 0.3);
-        border-radius: 999px;
-        padding: 0.25rem 0.7rem;
-        display: inline-block;
-        margin-bottom: 0.9rem;
+        font-family: var(--font-mono); font-size: 0.75rem; color: var(--blaze);
+        background: rgba(226, 99, 42, 0.1); border: 1px solid rgba(226, 99, 42, 0.3);
+        border-radius: 999px; padding: 0.25rem 0.7rem; display: inline-block; margin-bottom: 0.9rem;
     }
-
     .question-text {
-        font-family: var(--font-display);
-        font-style: italic;
-        font-weight: 500;
-        font-size: 1.1rem;
-        color: var(--ink);
-        margin: 0 0 1rem;
-    }
-
-    @keyframes rise {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-        .waypoint { animation: none; }
-        button, .marker { transition: none; }
+        font-family: var(--font-display); font-style: italic; font-weight: 500; font-size: 1.1rem;
+        color: var(--ink); margin: 0 0 1rem;
     }
 
     @media (max-width: 560px) {
-        .hero { padding: 3rem 1.25rem 2rem; }
-        .trail { padding: 0 1.25rem 3.5rem; }
-        .trail::before { left: 1.15rem; }
-        .waypoint { padding-left: 3rem; }
-        .marker { width: 2.4rem; height: 2.4rem; font-size: 0.8rem; }
+        .tabnav { flex-wrap: wrap; gap: 0.75rem; padding: 1rem; }
+        .tabnav-tabs { gap: 1rem; flex-wrap: wrap; order: 3; width: 100%; }
+        .tab-panel { padding: 1.5rem 1.25rem 3.5rem; }
         .field-row { flex-direction: column; }
         button { width: 100%; }
     }
@@ -999,319 +386,388 @@ input[type="text"], textarea, select {
 </head>
 <body>
 
-    <a href="#waypoint-01" class="skip-link">Skip to content</a>
+    <a href="#tab-dashboard" class="skip-link">Skip to content</a>
     <div class="page-loader" id="page-loader"></div>
 
-
-    <div class="topbar">
-        <span>Signed in as <strong>{{ request.user.username }}</strong></span>
-        <span>
-            <a href="{% url 'history' %}">My History</a>
-            <form method="POST" action="{% url 'logout' %}" class="logout-form">
-                {% csrf_token %}
-                <button type="submit" class="logout-link">Log Out</button>
-            </form>
-            <button type="button" class="theme-toggle" id="theme-toggle-btn" aria-label="Toggle dark mode">
-                <svg id="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 1 0 9 9 9 9 0 1 1-9-9Z"/></svg>
-            </button>
-        </span>
+    <nav class="tabnav">
+    <span class="tabnav-brand">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+        Trailmark
+    </span>
+    <div class="tabnav-tabs">
+    <button type="button" class="tabnav-tab is-active" data-tab-target="tab-dashboard">Dashboard</button>
+    <button type="button" class="tabnav-tab" data-tab-target="tab-advisor">Advisor</button>
+    <button type="button" class="tabnav-tab" data-tab-target="tab-resume">Resume</button>
+    <button type="button" class="tabnav-tab" data-tab-target="tab-skillgap">Skill Gap</button>
+    <button type="button" class="tabnav-tab" data-tab-target="tab-interview">Mock Interview</button>
+    <a href="{% url 'history' %}" class="tabnav-tab">History</a>
+</div>
+    <div class="tabnav-user">
+        <span>{{ request.user.username }}</span>
+        <button type="button" class="theme-toggle" id="theme-toggle-btn" aria-label="Toggle dark mode">
+            <svg id="theme-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 1 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+        </button>
+        <form method="POST" action="{% url 'logout' %}" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit">Logout</button>
+        </form>
     </div>
+</nav>
+    
 
-    <header class="hero">
-        <span class="eyebrow">Trailmark</span>
-        <h1>Find your way into the career you want</h1>
-        <p>Ask questions, get a roadmap, check your resume, close your skill gaps, and practice interviews — one trail, every waypoint you need.</p>
+    <!-- Tab: Dashboard landing -->
+    <div class="tab-panel is-active" id="tab-dashboard">
+        <div class="dash-hero">
+            <h1>Navigate Your Tech Career with Confidence</h1>
+            <p>Trailmark is your personal AI-powered career companion. From resume reviews to mock interviews, we provide the tools you need to succeed.</p>
+        </div>
 
         <div class="progress-ring-wrap{% if waypoints_done == 4 %} is-complete{% endif %}">
-            <svg class="progress-ring" viewBox="0 0 100 100">
-                <circle class="progress-ring-bg" cx="50" cy="50" r="45"></circle>
-                <circle class="progress-ring-fill{% if waypoints_done == 4 %} is-complete{% endif %}" cx="50" cy="50" r="45"
-    style="stroke-dasharray: {{ trail_circumference|default:'283' }}; stroke-dashoffset: {{ trail_dash_offset|default:'283' }};"></circle>
-            </svg>
-            <div class="progress-ring-text">
-                <span class="progress-ring-percent">{{ trail_progress_percent }}%</span>
-                <span class="progress-ring-sub">{{ waypoints_done }} of 4 waypoints explored</span>
+    <svg class="progress-ring" viewBox="0 0 100 100">
+        <circle class="progress-ring-bg" cx="50" cy="50" r="45"></circle>
+        <circle class="progress-ring-fill{% if waypoints_done == 4 %} is-complete{% endif %}" cx="50" cy="50" r="45"
+            style="stroke-dasharray: {{ trail_circumference|default:'283' }}; stroke-dashoffset: {{ trail_dash_offset|default:'283' }};"></circle>
+    </svg>
+    <div class="progress-ring-text">
+        <span class="progress-ring-percent">{{ trail_progress_percent }}%</span>
+        <span class="progress-ring-sub">{{ waypoints_done }} of 4 waypoints explored</span>
+    </div>
+</div>
+
+        <div class="dash-grid">
+            <div class="dash-card">
+                <div class="dash-card-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                </div>
+                <h2>AI Career Advisor</h2>
+                <p>Ask any career question and get personalized advice, learning roadmaps, and course recommendations.</p>
+                <button type="button" class="dash-card-btn" data-tab-target="tab-advisor">Get Started →</button>
+            </div>
+
+            <div class="dash-card">
+                <div class="dash-card-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                </div>
+                <h2>Resume Review</h2>
+                <p>Upload your resume and get professional, actionable feedback powered by AI to land your dream job.</p>
+                <button type="button" class="dash-card-btn" data-tab-target="tab-resume">Get Started →</button>
+            </div>
+
+            <div class="dash-card">
+                <div class="dash-card-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+                </div>
+                <h2>Skill Gap Analysis</h2>
+                <p>Compare your current skills against your target role and get a prioritized learning plan.</p>
+                <button type="button" class="dash-card-btn" data-tab-target="tab-skillgap">Get Started →</button>
+            </div>
+
+            <div class="dash-card">
+                <div class="dash-card-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+                </div>
+                <h2>Mock Interviews</h2>
+                <p>Practice behavioral and technical questions in a simulated interactive interview.</p>
+                <button type="button" class="dash-card-btn" data-tab-target="tab-interview">Get Started →</button>
             </div>
         </div>
 
-        <nav class="quick-nav">
-            <a href="#waypoint-01" class="{% if answer %}is-done{% endif %}"><span class="quick-nav-num">01</span>Ask</a>
-            <a href="#waypoint-02" class="{% if resume_feedback %}is-done{% endif %}"><span class="quick-nav-num">02</span>Resume</a>
-            <a href="#waypoint-03" class="{% if skill_gap_feedback %}is-done{% endif %}"><span class="quick-nav-num">03</span>Skill Gap</a>
-            <a href="#waypoint-04" class="{% if interview_question or interview_feedback %}is-done{% endif %}"><span class="quick-nav-num">04</span>Interview</a>
-        </nav>
-    </header>
 
-    <main class="trail">
+    </div>
 
-        <!-- Waypoint 1: Chatbot -->
-        <section class="waypoint{% if answer %} waypoint--reached{% endif %}" id="waypoint-01">
-            <div class="marker">01</div>
-            <div class="waypoint-head">
-                <h2>Ask a question</h2>
-                <span class="waypoint-label">Career &amp; study guidance</span>
-            </div>
+    <!-- Tab: Chatbot -->
+    <div class="tab-panel tab-panel--narrow" id="tab-advisor">
+        <div class="tab-panel-header">
+            <h1>Ask a question</h1>
+            <p>Get direct career and study guidance from an AI assistant.</p>
+        </div>
 
-            <div class="card">
-                {% if answer_error %}
-                <div class="error-banner"><span class="error-banner-icon">⚠</span><span>{{ answer_error }}</span></div>
+        <div class="card">
+            {% if answer_error %}
+            <div class="error-banner"><span class="error-banner-icon">⚠</span><span>{{ answer_error }}</span></div>
+            {% endif %}
+            <form method="POST" action="{% url 'ask_question' %}" class="js-async-form">
+                {% csrf_token %}
+                <div class="field-row">
+                    <input type="text" name="question" placeholder="e.g. How do I become a Data Scientist?">
+                    <button type="submit"><span class="btn-label">Ask</span><span class="btn-spinner"></span></button>
+                </div>
+            </form>
+
+            {% if answer %}
+            <div class="answer-block">
+                {% if asked_question %}
+                <p class="asked-question">You asked: <em>"{{ asked_question }}"</em></p>
                 {% endif %}
-                <form method="POST" action="{% url 'ask_question' %}" class="js-async-form">
+                <div class="answer-block-header">
+                    <span class="answer-label">Answer</span>
+                    <button type="button" class="collapse-toggle" data-collapse-toggle aria-expanded="true" aria-label="Collapse answer">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+                    </button>
+                </div>
+                <div class="ai-content collapsible-content" data-collapsed="false">{{ answer|safe }}</div>
+            </div>
+            {% endif %}
+
+            {% if roadmap %}
+            <div class="answer-block">
+                <span class="answer-label">📍 Career Roadmap</span>
+
+                <div class="roadmap-progress">
+                    <div class="roadmap-progress-label">
+                        <span>Path mapped out</span>
+                        <span>{{ roadmap|length }} steps</span>
+                    </div>
+                    <div class="roadmap-progress-track">
+                        <div class="roadmap-progress-fill"></div>
+                    </div>
+                </div>
+
+                <ol class="roadmap-timeline">
+                    {% for step in roadmap %}
+                    <li>{{ step }}</li>
+                    {% endfor %}
+                </ol>
+            </div>
+            {% endif %}
+
+            {% if courses %}
+            <div class="answer-block">
+                <span class="answer-label">📚 Recommended Courses</span>
+                <ul class="course-list">
+                    {% for course in courses %}
+                    <li>
+                        <a href="{{ course.link }}" target="_blank">{{ course.name }}</a>
+                        <span class="platform-tag"> — {{ course.platform }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Tab: Resume Analysis -->
+    <div class="tab-panel tab-panel--narrow" id="tab-resume">
+        <div class="tab-panel-header">
+            <h1>Resume Review</h1>
+            <p>Upload your PDF or DOCX resume to get actionable, AI-powered feedback.</p>
+        </div>
+
+        <div class="card">
+            {% if resume_error %}
+            <div class="error-banner"><span class="error-banner-icon">⚠</span><span>{{ resume_error }}</span></div>
+            {% endif %}
+            <form method="POST" action="{% url 'analyze_resume' %}" enctype="multipart/form-data" class="js-async-form">
+                {% csrf_token %}
+                <div class="dropzone" id="dropzone-resume" tabindex="0" role="button" aria-label="Upload resume file">
+                    <svg class="dropzone-check" viewBox="0 0 48 48" width="40" height="40"><circle cx="24" cy="24" r="20"/><path d="M15 24l7 7 11-12"/></svg>
+                    <svg class="dropzone-icon" viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M8 8l4-4 4 4"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
+                    <p class="dropzone-label">Drag &amp; drop your resume, or <strong>browse</strong></p>
+                    <p class="dropzone-hint">Accepts PDF or DOCX</p>
+                    <p class="dropzone-filename"></p>
+                    <input type="file" name="resume_file" accept=".pdf,.docx" class="dropzone-input" id="file-input-resume">
+                </div>
+                <div class="field-row" style="margin-top: 0.9rem;">
+                    <button type="submit"><span class="btn-label">Analyze Resume</span><span class="btn-spinner"></span></button>
+                </div>
+            </form>
+
+            {% if resume_feedback %}
+            <div class="answer-block">
+                <div class="answer-block-header">
+                    <span class="answer-label">📋 Resume Feedback</span>
+                    <button type="button" class="collapse-toggle" data-collapse-toggle aria-expanded="true" aria-label="Collapse feedback">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+                    </button>
+                </div>
+                <div class="ai-content collapsible-content" data-collapsed="false">{{ resume_feedback|safe }}</div>
+            </div>
+            {% endif %}
+
+            {% if resume_text %}
+            <div class="answer-block">
+                <span class="answer-label">✏️ Refine Your Resume</span>
+                <p class="field-note" style="margin: 0 0 0.6rem;">Edit the text below if you like, then let the AI apply the suggestions above. It won't invent facts — only rewrites what's already here.</p>
+                <form method="POST" action="{% url 'refine_resume' %}" class="js-async-form">
                     {% csrf_token %}
-                    <div class="field-row">
-                        <input type="text" name="question" placeholder="e.g. How do I become a Data Scientist?">
-                        <button type="submit"><span class="btn-label">Ask</span><span class="btn-spinner"></span></button>
-                    </div>
-                </form>
-
-                {% if answer %}
-                <div class="answer-block">
-                    {% if asked_question %}
-                    <p class="asked-question">You asked: <em>"{{ asked_question }}"</em></p>
-                    {% endif %}
-                    <div class="answer-block-header">
-                        <span class="answer-label">Answer</span>
-                        <button type="button" class="collapse-toggle" data-collapse-toggle aria-expanded="true" aria-label="Collapse answer">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
-                        </button>
-                    </div>
-                    <div class="ai-content collapsible-content" data-collapsed="false">{{ answer|safe }}</div>
-                </div>
-                {% endif %}
-
-                {% if roadmap %}
-                <div class="answer-block">
-                    <span class="answer-label">📍 Career Roadmap</span>
-
-                    <div class="roadmap-progress">
-                        <div class="roadmap-progress-label">
-                            <span>Path mapped out</span>
-                            <span>{{ roadmap|length }} steps</span>
-                        </div>
-                        <div class="roadmap-progress-track">
-                            <div class="roadmap-progress-fill"></div>
-                        </div>
-                    </div>
-
-                    <ol class="roadmap-timeline">
-                        {% for step in roadmap %}
-                        <li>{{ step }}</li>
-                        {% endfor %}
-                    </ol>
-                </div>
-                {% endif %}
-
-                {% if courses %}
-                <div class="answer-block">
-                    <span class="answer-label">📚 Recommended Courses</span>
-                    <ul class="course-list">
-                        {% for course in courses %}
-                        <li>
-                            <a href="{{ course.link }}" target="_blank">{{ course.name }}</a>
-                            <span class="platform-tag"> — {{ course.platform }}</span>
-                        </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-                {% endif %}
-            </div>
-        </section>
-
-        <!-- Waypoint 2: Resume Analysis -->
-        <section class="waypoint{% if resume_feedback %} waypoint--reached{% endif %}" id="waypoint-02">
-            <div class="marker">02</div>
-            <div class="waypoint-head">
-                <h2>Check your resume</h2>
-                <span class="waypoint-label">PDF or DOCX</span>
-            </div>
-
-            <div class="card">
-                {% if resume_error %}
-                <div class="error-banner"><span class="error-banner-icon">⚠</span><span>{{ resume_error }}</span></div>
-                {% endif %}
-                <form method="POST" action="{% url 'analyze_resume' %}" enctype="multipart/form-data" class="js-async-form">
-                    {% csrf_token %}
-                    <div class="dropzone" id="dropzone-resume" tabindex="0" role="button" aria-label="Upload resume file">
-                        <svg class="dropzone-check" viewBox="0 0 48 48" width="40" height="40"><circle cx="24" cy="24" r="20"/><path d="M15 24l7 7 11-12"/></svg>
-                        <svg class="dropzone-icon" viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M8 8l4-4 4 4"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
-                        <p class="dropzone-label">Drag &amp; drop your resume, or <strong>browse</strong></p>
-                        <p class="dropzone-hint">Accepts PDF or DOCX</p>
-                        <p class="dropzone-filename"></p>
-                        <input type="file" name="resume_file" accept=".pdf,.docx" class="dropzone-input" id="file-input-resume">
-                    </div>
-                    <div class="field-row" style="margin-top: 0.9rem;">
-                        <button type="submit"><span class="btn-label">Analyze Resume</span><span class="btn-spinner"></span></button>
-                    </div>
-                </form>
-
-                {% if resume_feedback %}
-                <div class="answer-block">
-                    <div class="answer-block-header">
-                        <span class="answer-label">📋 Resume Feedback</span>
-                        <button type="button" class="collapse-toggle" data-collapse-toggle aria-expanded="true" aria-label="Collapse feedback">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
-                        </button>
-                    </div>
-                    <div class="ai-content collapsible-content" data-collapsed="false">{{ resume_feedback|safe }}</div>
-                </div>
-                {% endif %}
-
-                {% if resume_text %}
-                <div class="answer-block">
-                    <span class="answer-label">✏️ Refine Your Resume</span>
-                    <p class="field-note" style="margin: 0 0 0.6rem;">Edit the text below if you like, then let the AI apply the suggestions above. It won't invent facts — only rewrites what's already here.</p>
-                    <form method="POST" action="{% url 'refine_resume' %}" class="js-async-form">
-                        {% csrf_token %}
-                        <textarea name="resume_text" class="resume-textarea" rows="10">{{ resume_text }}</textarea>
-                        <input type="hidden" name="feedback_text" value="{{ resume_feedback_raw }}">
-                        <div class="field-row" style="margin-top: 0.75rem;">
-                            <button type="submit"><span class="btn-label">✨ Refine with AI</span><span class="btn-spinner"></span></button>
-                        </div>
-                    </form>
-                </div>
-                {% endif %}
-
-                {% if refined_resume %}
-                <div class="answer-block">
-                    <span class="answer-label">✅ Refined Resume</span>
-                    <p class="field-note" style="margin: 0 0 0.6rem;">Feel free to keep editing, then download when it looks right.</p>
-                    <form method="POST" action="{% url 'download_refined_resume_pdf' %}">
-                        {% csrf_token %}
-                        <textarea name="refined_resume" class="resume-textarea" rows="14">{{ refined_resume }}</textarea>
-                        <div class="field-row" style="margin-top: 0.75rem;">
-                            <button type="submit" class="secondary">⬇ Download as PDF</button>
-                        </div>
-                    </form>
-                </div>
-                {% endif %}
-            </div>
-        </section>
-
-        <!-- Waypoint 3: Skill-Gap Analysis -->
-        <section class="waypoint{% if skill_gap_feedback %} waypoint--reached{% endif %}" id="waypoint-03">
-            <div class="marker">03</div>
-            <div class="waypoint-head">
-                <h2>Find your skill gap</h2>
-                <span class="waypoint-label">Resume vs. target role</span>
-            </div>
-
-            <div class="card">
-                {% if skill_gap_error %}
-                <div class="error-banner"><span class="error-banner-icon">⚠</span><span>{{ skill_gap_error }}</span></div>
-                {% endif %}
-                <form method="POST" action="{% url 'analyze_skill_gap' %}" enctype="multipart/form-data" class="js-async-form">
-                    {% csrf_token %}
-                    <div class="dropzone" id="dropzone-skill-gap" tabindex="0" role="button" aria-label="Upload resume file">
-                        <svg class="dropzone-check" viewBox="0 0 48 48" width="40" height="40"><circle cx="24" cy="24" r="20"/><path d="M15 24l7 7 11-12"/></svg>
-                        <svg class="dropzone-icon" viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M8 8l4-4 4 4"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
-                        <p class="dropzone-label">Drag &amp; drop your resume, or <strong>browse</strong></p>
-                        <p class="dropzone-hint">Accepts PDF or DOCX</p>
-                        <p class="dropzone-filename"></p>
-                        <input type="file" name="skill_gap_resume" accept=".pdf,.docx" class="dropzone-input" id="file-input-skill-gap">
-                    </div>
-                    <div class="field-row" style="margin-top: 0.9rem;">
-                        <select name="skill_gap_role">
-                            {% for role in roles %}
-                            <option value="{{ role }}" {% if role == skill_gap_role %}selected{% endif %}>{{ role }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <p class="field-note">Upload your resume, pick the role you're aiming for, and see exactly what's missing.</p>
-                    <div class="field-row">
-                        <button type="submit"><span class="btn-label">Find My Skill Gap</span><span class="btn-spinner"></span></button>
-                    </div>
-                </form>
-
-                {% if skill_gap_feedback %}
-                <div class="answer-block">
-                    <div class="answer-block-header">
-                        <span class="answer-label">🧭 Skill Gap Report — {{ skill_gap_role }}</span>
-                        <button type="button" class="collapse-toggle" data-collapse-toggle aria-expanded="true" aria-label="Collapse report">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
-                        </button>
-                    </div>
-                    <div class="ai-content collapsible-content" data-collapsed="false">{{ skill_gap_feedback|safe }}</div>
-                </div>
-                {% endif %}
-            </div>
-        </section>
-
-        <!-- Waypoint 4: Interview Practice -->
-        <section class="waypoint{% if interview_question or interview_feedback %} waypoint--reached{% endif %}" id="waypoint-04">
-            <div class="marker">04</div>
-            <div class="waypoint-head">
-                <h2>Practice an interview</h2>
-                <span class="waypoint-label">5 questions, real feedback</span>
-            </div>
-
-            <div class="card">
-                {% if interview_error %}
-                <div class="error-banner"><span class="error-banner-icon">⚠</span><span>{{ interview_error }}</span></div>
-                {% endif %}
-
-                {% if not interview_question and not interview_feedback %}
-                <form method="POST" action="{% url 'start_interview' %}" class="js-async-form">
-                    {% csrf_token %}
-                    <div class="field-row">
-                        <select name="interview_role">
-                            {% for role in roles %}
-                            <option value="{{ role }}">{{ role }}</option>
-                            {% endfor %}
-                        </select>
-                        <button type="submit"><span class="btn-label">Start Mock Interview</span><span class="btn-spinner"></span></button>
-                    </div>
-                </form>
-                {% endif %}
-
-                {% if interview_question %}
-                <span class="progress-tag">{{ interview_progress }} — {{ interview_role }}</span>
-                <p class="question-text">"{{ interview_question }}"</p>
-                <form method="POST" action="{% url 'submit_interview_answer' %}" class="js-async-form">
-                    {% csrf_token %}
-                    <textarea name="interview_answer" rows="4" placeholder="Type your answer here..."></textarea>
+                    <textarea name="resume_text" class="resume-textarea" rows="10">{{ resume_text }}</textarea>
+                    <input type="hidden" name="feedback_text" value="{{ resume_feedback_raw }}">
                     <div class="field-row" style="margin-top: 0.75rem;">
-                        <button type="submit"><span class="btn-label">Submit Answer</span><span class="btn-spinner"></span></button>
+                        <button type="submit"><span class="btn-label">✨ Refine with AI</span><span class="btn-spinner"></span></button>
                     </div>
                 </form>
-                {% endif %}
-
-                {% if interview_feedback %}
-                <div class="answer-block" style="border-top: none; padding-top: 0; margin-top: 0;">
-                    <div class="answer-block-header">
-                        <span class="answer-label">✅ Interview Feedback</span>
-                        <button type="button" class="collapse-toggle" data-collapse-toggle aria-expanded="true" aria-label="Collapse feedback">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
-                        </button>
-                    </div>
-                    <div class="ai-content collapsible-content" data-collapsed="false">{{ interview_feedback|safe }}</div>
-                </div>
-                <form method="POST" action="{% url 'start_interview' %}" style="margin-top: 1.25rem;" class="js-async-form">
-                    {% csrf_token %}
-                    <div class="field-row">
-                        <select name="interview_role">
-                            {% for role in roles %}
-                            <option value="{{ role }}">{{ role }}</option>
-                            {% endfor %}
-                        </select>
-                        <button type="submit" class="secondary"><span class="btn-label">Try Another Role</span><span class="btn-spinner"></span></button>
-                    </div>
-                </form>
-                {% endif %}
             </div>
-        </section>
+            {% endif %}
 
-    </main>
+            {% if refined_resume %}
+            <div class="answer-block">
+                <span class="answer-label">✅ Refined Resume</span>
+                <p class="field-note" style="margin: 0 0 0.6rem;">Feel free to keep editing, then download when it looks right.</p>
+                <form method="POST" action="{% url 'download_refined_resume_pdf' %}">
+                    {% csrf_token %}
+                    <textarea name="refined_resume" class="resume-textarea" rows="14">{{ refined_resume }}</textarea>
+                    <div class="field-row" style="margin-top: 0.75rem;">
+                        <button type="submit" class="secondary">⬇ Download as PDF</button>
+                    </div>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+    </div>
 
+    <!-- Tab: Skill-Gap Analysis -->
+    <div class="tab-panel tab-panel--narrow" id="tab-skillgap">
+        <div class="tab-panel-header">
+            <h1>Find your skill gap</h1>
+            <p>Resume vs. target role — see exactly what's missing.</p>
+        </div>
+
+        <div class="card">
+            {% if skill_gap_error %}
+            <div class="error-banner"><span class="error-banner-icon">⚠</span><span>{{ skill_gap_error }}</span></div>
+            {% endif %}
+            <form method="POST" action="{% url 'analyze_skill_gap' %}" enctype="multipart/form-data" class="js-async-form">
+                {% csrf_token %}
+                <div class="dropzone" id="dropzone-skill-gap" tabindex="0" role="button" aria-label="Upload resume file">
+                    <svg class="dropzone-check" viewBox="0 0 48 48" width="40" height="40"><circle cx="24" cy="24" r="20"/><path d="M15 24l7 7 11-12"/></svg>
+                    <svg class="dropzone-icon" viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M8 8l4-4 4 4"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
+                    <p class="dropzone-label">Drag &amp; drop your resume, or <strong>browse</strong></p>
+                    <p class="dropzone-hint">Accepts PDF or DOCX</p>
+                    <p class="dropzone-filename"></p>
+                    <input type="file" name="skill_gap_resume" accept=".pdf,.docx" class="dropzone-input" id="file-input-skill-gap">
+                </div>
+                <div class="field-row" style="margin-top: 0.9rem;">
+                    <select name="skill_gap_role">
+                        {% for role in roles %}
+                        <option value="{{ role }}" {% if role == skill_gap_role %}selected{% endif %}>{{ role }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <p class="field-note">Upload your resume, pick the role you're aiming for, and see exactly what's missing.</p>
+                <div class="field-row">
+                    <button type="submit"><span class="btn-label">Find My Skill Gap</span><span class="btn-spinner"></span></button>
+                </div>
+            </form>
+
+            {% if skill_gap_feedback %}
+            <div class="answer-block">
+                <div class="answer-block-header">
+                    <span class="answer-label">🧭 Skill Gap Report — {{ skill_gap_role }}</span>
+                    <button type="button" class="collapse-toggle" data-collapse-toggle aria-expanded="true" aria-label="Collapse report">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+                    </button>
+                </div>
+                <div class="ai-content collapsible-content" data-collapsed="false">{{ skill_gap_feedback|safe }}</div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Tab: Interview Practice -->
+    <div class="tab-panel tab-panel--narrow" id="tab-interview">
+        <div class="tab-panel-header">
+            <h1>Mock Interview Simulator</h1>
+            <p>Practice realistic interview questions tailored to your dream role.</p>
+        </div>
+
+        <div class="card">
+            {% if interview_error %}
+            <div class="error-banner"><span class="error-banner-icon">⚠</span><span>{{ interview_error }}</span></div>
+            {% endif %}
+
+            {% if not interview_question and not interview_feedback %}
+            <form method="POST" action="{% url 'start_interview' %}" class="js-async-form">
+                {% csrf_token %}
+                <div class="field-row">
+                    <select name="interview_role">
+                        {% for role in roles %}
+                        <option value="{{ role }}">{{ role }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit"><span class="btn-label">Start Mock Interview</span><span class="btn-spinner"></span></button>
+                </div>
+            </form>
+            {% endif %}
+
+            {% if interview_question %}
+            <span class="progress-tag">{{ interview_progress }} — {{ interview_role }}</span>
+            <p class="question-text">"{{ interview_question }}"</p>
+            <form method="POST" action="{% url 'submit_interview_answer' %}" class="js-async-form">
+                {% csrf_token %}
+                <textarea name="interview_answer" rows="4" placeholder="Type your answer here..."></textarea>
+                <div class="field-row" style="margin-top: 0.75rem;">
+                    <button type="submit"><span class="btn-label">Submit Answer</span><span class="btn-spinner"></span></button>
+                </div>
+            </form>
+            {% endif %}
+
+            {% if interview_feedback %}
+            <div class="answer-block" style="border-top: none; padding-top: 0; margin-top: 0;">
+                <div class="answer-block-header">
+                    <span class="answer-label">✅ Interview Feedback</span>
+                    <button type="button" class="collapse-toggle" data-collapse-toggle aria-expanded="true" aria-label="Collapse feedback">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+                    </button>
+                </div>
+                <div class="ai-content collapsible-content" data-collapsed="false">{{ interview_feedback|safe }}</div>
+            </div>
+            <form method="POST" action="{% url 'start_interview' %}" style="margin-top: 1.25rem;" class="js-async-form">
+                {% csrf_token %}
+                <div class="field-row">
+                    <select name="interview_role">
+                        {% for role in roles %}
+                        <option value="{{ role }}">{{ role }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="secondary"><span class="btn-label">Try Another Role</span><span class="btn-spinner"></span></button>
+                </div>
+            </form>
+            {% endif %}
+        </div>
+    </div>
 
     <script>
-        // ---------- Frosted topbar on scroll ----------
+        // ---------- Tab switching (also handles Get Started buttons on Dashboard) ----------
+        (function () {
+            var allTabTriggers = document.querySelectorAll('[data-tab-target]');
+            var panels = document.querySelectorAll('.tab-panel');
+            var navTabs = document.querySelectorAll('.tabnav-tab[data-tab-target]');
+
+            function activateTab(targetId) {
+                navTabs.forEach(function (t) { t.classList.remove('is-active'); });
+                panels.forEach(function (p) { p.classList.remove('is-active'); });
+                var navTab = document.querySelector('.tabnav-tab[data-tab-target="' + targetId + '"]');
+                if (navTab) navTab.classList.add('is-active');
+                var panel = document.getElementById(targetId);
+                if (panel) panel.classList.add('is-active');
+                window.scrollTo({ top: 0, behavior: 'auto' });
+            }
+
+            allTabTriggers.forEach(function (el) {
+                el.addEventListener('click', function () {
+                    activateTab(el.dataset.tabTarget);
+                });
+            });
+
+            var activeWaypoint = "{{ active_waypoint|escapejs }}";
+            var waypointToTab = {
+                'waypoint-01': 'tab-advisor',
+                'waypoint-02': 'tab-resume',
+                'waypoint-03': 'tab-skillgap',
+                'waypoint-04': 'tab-interview'
+            };
+            if (activeWaypoint && waypointToTab[activeWaypoint]) {
+                activateTab(waypointToTab[activeWaypoint]);
+            }
+        })();
+
+        // ---------- Frosted nav on scroll ----------
         window.addEventListener('scroll', function () {
-            document.querySelector('.topbar').classList.toggle('is-scrolled', window.scrollY > 20);
+            var nav = document.getElementById('tabnav');
+            if (nav) nav.classList.toggle('is-scrolled', window.scrollY > 20);
         });
-    </script>
 
-
-    <script>
         // ---------- Animate progress ring on load ----------
         window.addEventListener('load', function () {
             var ring = document.querySelector('.progress-ring-fill');
@@ -1323,24 +779,7 @@ input[type="text"], textarea, select {
                 setTimeout(function () { ring.style.strokeDashoffset = target; }, 100);
             });
         });
-    </script>
 
-    <script>
-    // ---------- Sticky quick-nav on scroll ----------
-    (function () {
-        var nav = document.querySelector('.quick-nav');
-        var hero = document.querySelector('.hero');
-        var trail = document.querySelector('.trail');
-        if (!nav || !hero || !trail) return;
-        new IntersectionObserver(function (entries) {
-            var isPinned = !entries[0].isIntersecting;
-            nav.classList.toggle('is-pinned', isPinned);
-            trail.style.paddingTop = isPinned ? '4.5rem' : '';
-        }, { threshold: 0 }).observe(hero);
-    })();
-</script>
-
-    <script>
         // ---------- Dark mode toggle ----------
         (function () {
             var STORAGE_KEY = "trailmark-theme";
@@ -1352,11 +791,11 @@ input[type="text"], textarea, select {
             var moonPath = '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>';
 
             function updateIcon() {
-    var isDark = html.getAttribute("data-theme") === "dark";
-    icon.innerHTML = isDark ? moonPath : sunPath;
-    var themeColorMeta = document.getElementById("theme-color-meta");
-    if (themeColorMeta) themeColorMeta.content = isDark ? "#16211C" : "#F6F3EA";
-}
+                var isDark = html.getAttribute("data-theme") === "dark";
+                icon.innerHTML = isDark ? moonPath : sunPath;
+                var themeColorMeta = document.getElementById("theme-color-meta");
+                if (themeColorMeta) themeColorMeta.content = isDark ? "#16211C" : "#F6F3EA";
+            }
 
             if (btn) {
                 btn.addEventListener("click", function () {
@@ -1434,22 +873,15 @@ input[type="text"], textarea, select {
         })();
 
         // ---------- Loading state on submit ----------
-        // Full-page POST forms still take a couple seconds (AI calls) — give
-        // the user something to look at instead of a frozen button.
         (function () {
-    var forms = document.querySelectorAll(".js-async-form");
-    forms.forEach(function (form) {
-        form.addEventListener("submit", function () {
-            var btn = form.querySelector("button[type='submit']");
-            if (!btn || btn.classList.contains("is-loading")) return;
+            var forms = document.querySelectorAll(".js-async-form");
+            forms.forEach(function (form) {
+                form.addEventListener("submit", function () {
+                    var btn = form.querySelector("button[type='submit']");
+                    if (!btn || btn.classList.contains("is-loading")) return;
 
-            var loader = document.getElementById("page-loader");
-            if (loader) loader.style.width = "70%";
-                    // Defer to the next tick — disabling fields synchronously
-                    // inside the submit handler stops the browser from
-                    // including their values in the request that's about
-                    // to be sent (this bit us with both the CSRF token and
-                    // the actual question/file fields).
+                    var loader = document.getElementById("page-loader");
+                    if (loader) loader.style.width = "70%";
                     setTimeout(function () {
                         btn.classList.add("is-loading");
                         btn.disabled = true;
@@ -1467,8 +899,6 @@ input[type="text"], textarea, select {
                 var content = btn.closest(".answer-block").querySelector(".collapsible-content");
                 if (!content) return;
 
-                // Only show the toggle if there's actually enough content
-                // to be worth collapsing.
                 if (content.scrollHeight < 220) {
                     btn.style.display = "none";
                     return;
@@ -1478,31 +908,11 @@ input[type="text"], textarea, select {
                     var isCollapsed = content.getAttribute("data-collapsed") === "true";
                     content.setAttribute("data-collapsed", isCollapsed ? "false" : "true");
                     btn.setAttribute("aria-expanded", isCollapsed ? "true" : "false");
-                    if (isCollapsed) {
-                        // expanding — nothing else to do, CSS handles the height
-                    } else {
-                        // collapsing — bring the card back into view so the
-                        // user doesn't lose their place
+                    if (!isCollapsed) {
                         btn.scrollIntoView({ behavior: "smooth", block: "nearest" });
                     }
                 });
             });
-        })();
-
-        // ---------- Scroll to the section that just got a new result ----------
-        // Full-page POST/reload would otherwise dump the user back at the
-        // top of the page after every action.
-        (function () {
-            var activeWaypoint = "{{ active_waypoint|escapejs }}";
-            if (activeWaypoint) {
-                (function() {
-                    var target = document.getElementById(activeWaypoint);
-                    if (target) {
-                        var rect = target.getBoundingClientRect();
-                        window.scrollTo({ top: window.scrollY + rect.top - 90, left: 0, behavior: "auto" });
-                    }
-                })();
-            }
         })();
     </script>
 
