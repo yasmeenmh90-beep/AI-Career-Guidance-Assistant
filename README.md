@@ -1,7 +1,4 @@
 
-
-
-Readme · MD
  
 # Trailmark — AI Career & Study Guidance Assistant
  
