@@ -31,12 +31,12 @@ DEBUG = os.getenv("DEBUG", "False").lower() in ("true", "1", "t")
 
 ALLOWED_HOSTS = os.getenv(
     "ALLOWED_HOSTS",
-    "yasmeenmh.pythonanywhere.com,127.0.0.1,localhost"
+    "yasmeenmh.pythonanywhere.com,127.0.0.1,localhost,ai-career-guidance-assistant.onrender.com,.onrender.com"
 ).split(",")
 
 CSRF_TRUSTED_ORIGINS = os.getenv(
     "CSRF_TRUSTED_ORIGINS",
-    "https://yasmeenmh.pythonanywhere.com"
+    "https://yasmeenmh.pythonanywhere.com,https://ai-career-guidance-assistant.onrender.com"
 ).split(",")
 
 # Application definition
