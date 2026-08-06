@@ -214,7 +214,7 @@ To add a new role, add matching entries to `resources/roadmaps.json` and `resour
  
 | Name | Role |
 |---|---|
-| Yasmeen Azmat Ali | Backend development (Django) and API integration (OpenAI API key) |
+| Yasmeen Azmat Ali | Backend development (Django) — models, views, routing, session handling — and OpenAI API integration across all five AI-driven features (chatbot, resume feedback, resume refinement, skill-gap analysis, interview practice) |
 | Mohammed Ayaan | Frontend UI/UX design, resource collection |
 | Gagan | Project media section — deployment workflow diagram, system architecture diagram, demo video, presentation |
 | Sai Krishna | Deployment |
@@ -225,7 +225,7 @@ Built for **NextGen Innovation 2026** — Innovate • Collaborate • Transform
  
 ## Live Demo
  
-- **PythonAnywhere:** https://yasmeenmh.pythonanywhere.com
+- **PythonAnywhere:** https://yasmeenmh.pythonanywhere.com(that UI\UX Design is mine)
 - **Render:** https://ai-career-guidance-assistant.onrender.com
 ## What's Next
  
