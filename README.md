@@ -222,7 +222,7 @@ Built for **NextGen Innovation 2026** — Innovate • Collaborate • Transform
  
 ## Live Demo
  
-- **PythonAnywhere:** https://yasmeenmh.pythonanywhere.com(that UI\UX Design is mine)
+- **PythonAnywhere:** https://yasmeenmh.pythonanywhere.com (that UI\UX Design is mine)
 - **Render:** https://ai-career-guidance-assistant.onrender.com
 ## What's Next
  
